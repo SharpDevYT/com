@@ -289,10 +289,30 @@
             overflow: hidden;
             border-radius: 12px;
             margin-bottom: 1rem;
-            background: #000;
+            background: rgba(0,0,0,0.5);
         }
 
         .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .short-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 177.78%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .short-container iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -573,30 +593,30 @@
                     <button onclick="switchView('tools-view')" class="btn btn-secondary" style="width: 100%;">Access Tools &rarr;</button>
                 </div>
 
-                <!-- LATEST PLAYLIST VIDEO SECTION -->
+                <!-- DYNAMIC LATEST LONG-FORM VIDEO SECTION -->
                 <div class="card">
                     <div>
-                        <div class="card-tag">Featured Playlist</div>
-                        <h3>Latest Playlist Video</h3>
+                        <div class="card-tag">Latest Upload</div>
+                        <h3 id="latest-video-title">Latest Video</h3>
                         <div class="video-container">
-                            <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=PL1XuTk7AsklcJHFXK7V5fDuIU39BrapiC" title="Latest Playlist Upload" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe id="latest-video-frame" src="" title="Latest Video" allowfullscreen></iframe>
                         </div>
-                        <p>Watch videos directly from our featured playlist.</p>
+                        <p id="latest-video-desc">Automatically fetching the latest long-form video from @sharpdevgaming...</p>
                     </div>
-                    <a href="https://www.youtube.com/playlist?list=PL1XuTk7AsklcJHFXK7V5fDuIU39BrapiC" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View Full Playlist &rarr;</a>
+                    <a id="latest-video-link" href="https://www.youtube.com/@sharpdevgaming/videos" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">Watch Video &rarr;</a>
                 </div>
 
-                <!-- LATEST CHANNEL UPLOADS SECTION -->
+                <!-- DYNAMIC LATEST SHORT SECTION FROM SPECIFIC PLAYLIST -->
                 <div class="card">
                     <div>
-                        <div class="card-tag">Latest Channel Uploads</div>
-                        <h3>Recent Videos & Shorts</h3>
-                        <div class="video-container">
-                            <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=UUpa_XDcuNnq0InfiUe5OtHw" title="Recent Channel Uploads" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="card-tag">Shorts & Highlights</div>
+                        <h3 id="latest-short-title">Recent Uploaded Short</h3>
+                        <div class="short-container">
+                            <iframe id="latest-short-frame" src="https://www.youtube.com/embed/videoseries?list=PL1XuTk7AskldQKO-REY3u8enxRpplpTU0" title="Shorts Playlist" allowfullscreen></iframe>
                         </div>
-                        <p>Watch recent uploads directly from the channel stream.</p>
+                        <p id="latest-short-desc">Automatically displaying your most recent YouTube Short from your playlist...</p>
                     </div>
-                    <a href="https://www.youtube.com/@sharpdevgaming/shorts" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View All Shorts &rarr;</a>
+                    <a id="latest-short-link" href="https://www.youtube.com/playlist?list=PL1XuTk7AskldQKO-REY3u8enxRpplpTU0" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View Playlist &rarr;</a>
                 </div>
             </div>
         </main>
@@ -836,6 +856,52 @@
 
     <script>
         let currentThumbnailUrl = '';
+
+        // AUTOMATIC LATEST CONTENT & PLAYLIST FETCH
+        async function fetchLatestChannelContent() {
+            const channelId = 'UCpa_XDcuNnq0InfiUe5OtHw'; 
+            const playlistId = 'PL1XuTk7AskldQKO-REY3u8enxRpplpTU0';
+            
+            const channelRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+            const playlistRssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
+            
+            const channelApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(channelRssUrl)}`;
+            const playlistApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(playlistRssUrl)}`;
+
+            // 1. FETCH LATEST LONG FORM VIDEO FROM CHANNEL
+            try {
+                const response = await fetch(channelApiUrl);
+                const data = await response.json();
+                if (data.status === 'ok' && data.items && data.items.length > 0) {
+                    const latestVideo = data.items[0];
+                    const videoId = extractVideoId(latestVideo.link);
+                    document.getElementById('latest-video-title').innerText = latestVideo.title;
+                    document.getElementById('latest-video-frame').src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+                    document.getElementById('latest-video-desc').innerText = `Watch our latest video upload on YouTube!`;
+                    document.getElementById('latest-video-link').href = latestVideo.link;
+                }
+            } catch (err) {
+                document.getElementById('latest-video-frame').src = `https://www.youtube.com/embed?listType=playlist&list=UUpa_XDcuNnq0InfiUe5OtHw`;
+            }
+
+            // 2. FETCH RECENT SHORT DIRECTLY FROM YOUR PLAYLIST
+            try {
+                const response = await fetch(playlistApiUrl);
+                const data = await response.json();
+                if (data.status === 'ok' && data.items && data.items.length > 0) {
+                    const recentShort = data.items[0];
+                    const shortId = extractVideoId(recentShort.link);
+                    document.getElementById('latest-short-title').innerText = recentShort.title;
+                    document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/${shortId}?rel=0`;
+                    document.getElementById('latest-short-desc').innerText = `Latest video from the Shorts playlist!`;
+                    document.getElementById('latest-short-link').href = recentShort.link;
+                } else {
+                    throw new Error('Playlist empty or restricted');
+                }
+            } catch (err) {
+                document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
+            }
+        }
 
         const nicheDatabase = {
             gaming: {
@@ -1266,6 +1332,10 @@
             }
             document.getElementById('ms-result').style.display = 'block';
         }
+
+        window.onload = function() {
+            fetchLatestChannelContent();
+        };
     </script>
 </body>
 </html>
