@@ -640,7 +640,7 @@
                     <a id="latest-video-link" href="https://www.youtube.com/@sharpdevgaming/videos" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">Watch Video &rarr;</a>
                 </div>
 
-                <!-- DYNAMIC LATEST SHORT SECTION -->
+                <!-- DYNAMIC LATEST SHORT SECTION FROM SPECIFIC PLAYLIST -->
                 <div class="card">
                     <div>
                         <div class="card-tag">Shorts & Highlights</div>
@@ -648,9 +648,9 @@
                         <div class="short-container">
                             <iframe id="latest-short-frame" src="" title="Latest Short Video" allowfullscreen></iframe>
                         </div>
-                        <p id="latest-short-desc">Automatically displaying your most recent YouTube Short upload...</p>
+                        <p id="latest-short-desc">Automatically displaying your most recent YouTube Short from your playlist...</p>
                     </div>
-                    <a id="latest-short-link" href="https://www.youtube.com/@sharpdevgaming/shorts" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View All Shorts &rarr;</a>
+                    <a id="latest-short-link" href="https://www.youtube.com/playlist?list=PL1XuTk7AskldQKO-REY3u8enxRpplpTU0" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View Playlist &rarr;</a>
                 </div>
             </div>
         </main>
@@ -908,60 +908,49 @@
     <script>
         let currentThumbnailUrl = '';
 
-        // AUTOMATIC LATEST YOUTUBE CONTENT LOADER
+        // AUTOMATIC LATEST CONTENT & PLAYLIST FETCH
         async function fetchLatestChannelContent() {
             const channelId = 'UCpa_XDcuNnq0InfiUe5OtHw'; 
-            const rssFeedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssFeedUrl)}`;
+            const playlistId = 'PL1XuTk7AskldQKO-REY3u8enxRpplpTU0';
+            
+            const channelRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+            const playlistRssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
+            
+            const channelApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(channelRssUrl)}`;
+            const playlistApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(playlistRssUrl)}`;
 
+            // 1. FETCH LATEST LONG FORM VIDEO FROM CHANNEL
             try {
-                const response = await fetch(apiUrl);
+                const response = await fetch(channelApiUrl);
                 const data = await response.json();
-
                 if (data.status === 'ok' && data.items && data.items.length > 0) {
-                    const longFormVideos = data.items.filter(item => 
-                        !item.link.includes('/shorts/') && 
-                        !item.title.toLowerCase().includes('#shorts')
-                    );
-
-                    const shortVideos = data.items.filter(item => 
-                        item.link.includes('/shorts/') || 
-                        item.title.toLowerCase().includes('#shorts')
-                    );
-
-                    const latestVideo = longFormVideos.length > 0 ? longFormVideos[0] : data.items[0];
+                    const latestVideo = data.items[0];
                     const videoId = extractVideoId(latestVideo.link);
                     document.getElementById('latest-video-title').innerText = latestVideo.title;
                     document.getElementById('latest-video-frame').src = `https://www.youtube.com/embed/${videoId}?rel=0`;
                     document.getElementById('latest-video-desc').innerText = `Watch our latest video upload on YouTube!`;
                     document.getElementById('latest-video-link').href = latestVideo.link;
-
-                    if (shortVideos.length > 0) {
-                        const latestShort = shortVideos[0];
-                        const shortId = extractVideoId(latestShort.link);
-                        document.getElementById('latest-short-title').innerText = latestShort.title;
-                        document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/${shortId}?rel=0`;
-                        document.getElementById('latest-short-desc').innerText = `Check out our latest gameplay short!`;
-                        document.getElementById('latest-short-link').href = latestShort.link;
-                    } else {
-                        const fallbackShort = data.items[0];
-                        const shortId = extractVideoId(fallbackShort.link);
-                        document.getElementById('latest-short-title').innerText = fallbackShort.title;
-                        document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/${shortId}?rel=0`;
-                        document.getElementById('latest-short-desc').innerText = `Watch our newest gaming short on YouTube!`;
-                        document.getElementById('latest-short-link').href = fallbackShort.link;
-                    }
-                } else {
-                    throw new Error('No items found');
                 }
             } catch (err) {
-                document.getElementById('latest-video-title').innerText = "Latest Channel Uploads";
                 document.getElementById('latest-video-frame').src = `https://www.youtube.com/embed?listType=playlist&list=UUpa_XDcuNnq0InfiUe5OtHw`;
-                document.getElementById('latest-video-desc').innerText = "Watch the newest long-form devlogs and gameplay content on YouTube.";
+            }
 
-                document.getElementById('latest-short-title').innerText = "Latest Channel Shorts";
-                document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed?listType=playlist&list=UUpa_XDcuNnq0InfiUe5OtHw`;
-                document.getElementById('latest-short-desc').innerText = "Watch the newest gameplay shorts on YouTube.";
+            // 2. FETCH RECENT SHORT DIRECTLY FROM YOUR PLAYLIST
+            try {
+                const response = await fetch(playlistApiUrl);
+                const data = await response.json();
+                if (data.status === 'ok' && data.items && data.items.length > 0) {
+                    const recentShort = data.items[0];
+                    const shortId = extractVideoId(recentShort.link);
+                    document.getElementById('latest-short-title').innerText = recentShort.title;
+                    document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/${shortId}?rel=0`;
+                    document.getElementById('latest-short-desc').innerText = `Latest video from the Shorts playlist!`;
+                    document.getElementById('latest-short-link').href = recentShort.link;
+                } else {
+                    throw new Error('Playlist empty or restricted');
+                }
+            } catch (err) {
+                document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed?listType=playlist&list=${playlistId}`;
             }
         }
 
@@ -1326,108 +1315,155 @@
 
         const fontStyles = [
             { name: "1. Bold Sans", transform: t => mapChars(t, "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙", "𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳", "𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗") },
-            { name: "2. Monospace", transform: t => mapChars(t, "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉", "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣", "𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟩𝟾𝟿") },
+            { name: "2. Monospace", transform: t => mapChars(t, "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉", "𝚊𝚋c𝚍e𝚏𝚐𝚑i𝚓k𝚕m𝚗o𝚙q𝚛s𝚝u𝚟w𝚡y𝚣", "𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟩𝟾𝟿") },
             { name: "3. Script Aesthetic", transform: t => mapChars(t, "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵", "𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏", "0123456789") },
             { name: "4. Bold Script", transform: t => mapChars(t, "𝓐𝓑𝓒𝓓𝓔𝓐𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟BR𝓢𝓣VU𝓥interXYZ", "𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝓩", "0123456789") },
             { name: "5. Double Struck", transform: t => mapChars(t, "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ", "𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫", "𝟘𝟙𝟚𝟛𝟜𝕝𝟞𝟟𝟠𝟡") },
             { name: "6. Fraktur Gothic", transform: t => mapChars(t, "𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔏𝔍𝔍𝔏𝔍𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏", "𝔞𝔟𝔠𝔡𝔢𝔣𝔤 वांछ𝔦𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷", "0123456789") },
             { name: "7. Bold Fraktur", transform: t => mapChars(t, "𝕬𝕭𝕮𝕯𝕰𝕱𝕺𝕸𝕴Sn𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺", "𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟", "0123456789") },
-            { name: "8. Circled Dark", transform: t => mapChars(t, "🅐🅑🅒🅓🅔🅕🅖packages🅘🅙kt🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅯 any🅨🅩", "🅐🅑🅒🅓🅔🅕🅖packages🅘🅙kt🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅯 any🅨🅩", "⓿➊➋➌➍➎➏➐➑➒") },
-            { name: "9. Circled White", transform: t => mapChars(t, "ⒶⒷⒸⒹⒺ⒡ⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ", "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ", "⓪①②③④⑤⑥⑦⑧⑨") },
-            { name: "10. Squared Dark", transform: t => mapChars(t, "🅰🅱🅂🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼 any🄾🄿🅀2🅂🅃🅄🅠🅆 any🅈🅩", "🅰🅱🅂🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼 any🄾🄿🅀2🅂🅃🅄🅠🅆 any🅈🅩", "0123456789") },
-            { name: "11. Small Caps", transform: t => mapChars(t, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ", "0123456789") },
-            { name: "12. Superscript", transform: t => mapChars(t, "ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾQᴿˢᵀᵁⱽᵂˣʸᶻ", "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖqʳˢᵗᵘᵛʷˣʸᶻ", "⁰¹²³⁴⁵⁶⁷⁸⁹") },
-            { name: "13. Subscript", transform: t => mapChars(t, "ₐBCDₑFGₕᵢⱼₖₗₘₙₒₚQᵣₛₜᵤᵥWₓYZ", "ₐbcdₑfgₕᵢⱼₖₗₘₙₒₚqᵣₛₜᵤᵥwₓyz", "₀₁₂₃₄₅₆₇₈₉") },
-            { name: "14. Upside Down", transform: t => flipText(t) },
-            { name: "15. Vaporwave Wide", transform: t => t.split('').map(c => c.charCodeAt(0) >= 33 && c.charCodeAt(0) <= 126 ? String.fromCharCode(c.charCodeAt(0) + 65248) : c).join('') },
-            { name: "16. Cyber Bracket", transform: t => `【${t}】` },
-            { name: "17. Japanese Aesthetic", transform: t => `『${t}』` },
-            { name: "18. Sparkle Glitch", transform: t => `✧･ﾟ:${t}:･ﾟ✧` },
-            { name: "19. Cross Strikethrough", transform: t => t.split('').join('̵') },
-            { name: "20. Slash Strikethrough", transform: t => t.split('').join('̷') },
-            { name: "21. Underline Double", transform: t => t.split('').join('̳') },
-            { name: "22. Dotted Above", transform: t => t.split('').join('̇') },
-            { name: "23. Arrow Surround", transform: t => `➼ ${t} ➼` },
-            { name: "24. Gamer Tag Cross", transform: t => `⚔️ ${t} ⚔️` },
-            { name: "25. Crown Regal", transform: t => `👑 ${t} 👑` },
-            { name: "26. Diamond Luxury", transform: t => `💎 ${t} 💎` },
-            { name: "27. Fire Hot", transform: t => `🔥 ${t} 🔥` },
-            { name: "28. Skull Hardcore", transform: t => `☠️ ${t} ☠️` },
-            { name: "29. Lightning Speed", transform: t => `⚡ ${t} ⚡` },
-            { name: "30. Star Hero", transform: t => `★ ${t} ★` },
-            { name: "31. Target Aim", transform: t => `🎯 ${t} 🎯` },
-            { name: "32. Biohazard Tactical", transform: t => `☣️ ${t} ☣️` },
-            { name: "33. Shield Armor", transform: t => `🛡️ ${t} 🛡️` },
-            { name: "34. Rocket Speedrun", transform: t => `🚀 ${t} 🚀` },
-            { name: "35. Ghost Phantom", transform: t => `👻 ${t} 👻` },
-            { name: "36. Glitch Slash", transform: t => t.split('').join('҂') },
-            { name: "37. Overline Bar", transform: t => t.split('').join('̅') },
-            { name: "38. Tilde Wave", transform: t => `〰️ ${t} 〰️` },
-            { name: "39. Double Arrow", transform: t => `« ${t} »` },
-            { name: "40. Math Angle", transform: t => `⟨ ${t} ⟩` },
-            { name: "41. Dot Matrix", transform: t => t.split('').join('·') },
-            { name: "42. Spaced Out", transform: t => t.split('').join(' ') },
-            { name: "43. Heart Aesthetic", transform: t => `♥ ${t} ♥` },
-            { name: "44. Check Verified", transform: t => `✔ ${t}` },
-            { name: "45. Radioisotope Danger", transform: t => `☢️ ${t} ☢️` },
-            { name: "46. Infinity Cycle", transform: t => `♾️ ${t} ♾️` },
-            { name: "47. Gamepad Retro", transform: t => `🎮 ${t} 🎮` },
-            { name: "48. Neon Glow Box", transform: t => `░▒▓ ${t} ▓▒░` },
-            { name: "49. Block Border", transform: t => `█▓▒░ ${t} ░▒▓█` },
-            { name: "50. SharpDev Sign", transform: t => `[ ⚡ ${t} ⚡ ]` }
+            { name: "8. Sans Serif Normal", transform: t => mapChars(t, "𝖠𝖡𝖢𝖖𝖤𝖥𝖦𝖧𝖨𝖵𝖭𝖫𝖬𝖭𝖮𝖯𝖰𝖱𝖲𝖳𝖴𝖵𝖶𝖷𝖸𝖹", "𝖺𝖻𝖼𝖽𝖾𝖿𝖻𝗁𝗂𝖺𝗄𝗅𝗆𝗇𝗈𝗉𝗊𝗋𝗌𝗍𝗎𝗏𝗐𝗑𝗒𝗓", "𝟢𝟣𝟤𝟥𝟦𝟧𝟨𝟩𝟪𝟫") },
+            { name: "9. Sans Bold Italic", transform: t => mapChars(t, "𝘼𝘽𝘾𝘿𝙀𝙁𝙂𝙃𝙄𝙅𝙆𝙇𝙈𝙉𝙊𝙋𝙌𝙍𝙎𝙏𝙐𝙑𝙎𝙯𝙔𝙁", "𝙖𝙗𝙘𝙙𝙚𝙛𝙜𝙝𝙞𝙟𝙠𝙡𝙢𝙣𝙤𝙥 drain𝙧𝙨𝙩𝙪𝙫𝙬𝙭𝙮𝙯", "0123456789") },
+            { name: "10. Small Caps", transform: t => mapChars(t, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ", "0123456789") },
+            { name: "11. Bracketed Gamer", transform: t => `⟦ ${t} ⟧` },
+            { name: "12. Cyber Neon", transform: t => `★彡 [${t}] 彡★` },
+            { name: "13. Gamer Tag", transform: t => `꧁༺ ${t} ༻꧂` },
+            { name: "14. Cross Slash", transform: t => t.split('').join('̷') },
+            { name: "15. Underline Clean", transform: t => t.split('').join('̲') },
+            { name: "16. Strikethrough", transform: t => t.split('').join('̶') },
+            { name: "17. Overline", transform: t => t.split('').join('̅') },
+            { name: "18. Tilde Wave", transform: t => `〰 ${t} 〰` },
+            { name: "19. Japanese Aesthetic", transform: t => `【 ${t} 】` },
+            { name: "20. Sparkle Accent", transform: t => `✨ ${t} ✨` },
+            { name: "21. Fire Emblem", transform: t => `🔥 ${t} 🔥` },
+            { name: "22. Sword Border", transform: t => `⚔️ ${t} ⚔️` },
+            { name: "23. Target Lock", transform: t => `🎯 ${t} 🎯` },
+            { name: "24. Crown Badge", transform: t => `👑 ${t} 👑` },
+            { name: "25. Skull Clan", transform: t => `💀 ${t} 💀` },
+            { name: "26. Shield Tag", transform: t => `🛡️ ${t} 🛡️` },
+            { name: "27. Lightning Aura", transform: t => `⚡ ${t} ⚡` },
+            { name: "28. Diamond Border", transform: t => `◈ ${t} ◈` },
+            { name: "29. Double Arrow", transform: t => `»» ${t} ««` },
+            { name: "30. Star Wings", transform: t => `★·.·´¯\`·.·★ ${t} ★·.·´¯\`·.·★` },
+            { name: "31. Corner Brackets", transform: t => `◤ ${t} ◢` },
+            { name: "32. Heavy Box", transform: t => `█▒▒ ${t} ▒▒█` },
+            { name: "33. Full Width", transform: t => t.replace(/[a-zA-Z0-9]/g, c => String.fromCharCode(c.charCodeAt(0) + 0xFEE0)) },
+            { name: "34. Superscript", transform: t => mapChars(t, "ᴬᴮᶜᴰᴱᴴᴵᴷᴸᴹᴺᴼᴾᴿᵀᵁⱽ", "ᵃᵇᶜᵈᵉᶠᵍʰʲᵏˡᵐⁿᵒᵖᑫʳˢᵗᵘᵛʷˣʸᶻ", "⁰¹²³⁴⁵⁶⁷⁸⁹") },
+            { name: "35. Subscript", transform: t => mapChars(t, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ₐᵦ𝒸𝒹ₑ𝒪fgₕᵢⱼₖₗₘₙₒₚqᵣₛₜᵤᵥ𝓌ₓyz", "₀₁₂₃₄₅₆₇₈₉") },
+            { name: "36. Reverse Text", transform: t => t.split('').reverse().join('') },
+            { name: "37. Dotted Outline", transform: t => t.split('').join('·') },
+            { name: "38. Space Out", transform: t => t.split('').join(' ') },
+            { name: "39. Double Space", transform: t => t.split('').join('  ') },
+            { name: "40. Arrow Pointer", transform: t => `➢ ${t}` },
+            { name: "41. Radioactivity", transform: t => `☢️ ${t} ☢️` },
+            { name: "42. Biohazard", transform: t => `☣️ ${t} ☣️` },
+            { name: "43. Controller", transform: t => `🎮 ${t} 🎮` },
+            { name: "44. Game Over", transform: t => `👾 ${t} 👾` },
+            { name: "45. Rocket Launch", transform: t => `🚀 ${t} 🚀` },
+            { name: "46. Trophy Gold", transform: t => `🏆 ${t} 🏆` },
+            { name: "47. Portal Void", transform: t => `🌀 ${t} 🌀` },
+            { name: "48. Crystal Gem", transform: t => `💎 ${t} 💎` },
+            { name: "49. Infinite Loop", transform: t => `♾️ ${t} ♾️` },
+            { name: "50. Trident Badge", transform: t => `🔱 ${t} 🔱` }
         ];
 
-        function mapChars(text, upperMap, lowerMap, numMap) {
+        function mapChars(str, upper, lower, digits) {
             const stdUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const stdLower = "abcdefghijklmnopqrstuvwxyz";
-            const stdNum   = "0123456789";
-            
-            return text.split('').map(c => {
-                let uIdx = stdUpper.indexOf(c);
-                if(uIdx !== -1) return Array.from(upperMap)[uIdx] || c;
-                let lIdx = stdLower.indexOf(c);
-                if(lIdx !== -1) return Array.from(lowerMap)[lIdx] || c;
-                let nIdx = stdNum.indexOf(c);
-                if(nIdx !== -1) return Array.from(numMap)[nIdx] || c;
-                return c;
-            }).join('');
-        }
+            const stdDigits = "0123456789";
 
-        function flipText(text) {
-            const normal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            const flipped = "ɐqɔpǝɟƃɥᴉɾʞlɯudodɹsʇnʌʍxʎz∀qƆpƎℲפHIſʞ˥WNOԀΌᴚS┴∩ΛMX⅄Z0ƖᄅƐㄣϛ9ㄥ86";
-            return text.split('').reverse().map(c => {
-                let idx = normal.indexOf(c);
-                return idx !== -1 ? flipped[idx] : c;
-            }).join('');
+            let res = "";
+            for (let i = 0; i < str.length; i++) {
+                let c = str[i];
+                let uIdx = stdUpper.indexOf(c);
+                let lIdx = stdLower.indexOf(c);
+                let dIdx = stdDigits.indexOf(c);
+
+                if (uIdx !== -1 && upper) res += Array.from(upper)[uIdx] || c;
+                else if (lIdx !== -1 && lower) res += Array.from(lower)[lIdx] || c;
+                else if (dIdx !== -1 && digits) res += Array.from(digits)[dIdx] || c;
+                else res += c;
+            }
+            return res;
         }
 
         function convertAllFonts() {
             const val = document.getElementById('text-input').value || "SharpDev Gaming";
-            const container = document.getElementById('font-grid-container');
-            container.innerHTML = '';
-
-            fontStyles.forEach((styleObj, index) => {
-                const transformed = styleObj.transform(val);
-                const id = `font-out-${index}`;
-                
-                const card = document.createElement('div');
-                card.className = 'font-card';
-                card.innerHTML = `
-                    <span class="font-name">${styleObj.name}</span>
-                    <div class="font-output" id="${id}"></div>
-                    <button class="btn btn-secondary" onclick="copyCode('${id}')" style="font-size: 0.75rem; padding: 0.35rem 0.6rem; margin-top:0.4rem;">Copy</button>
+            const fontContainer = document.getElementById('font-grid-container');
+            
+            let html = "";
+            fontStyles.forEach((style, index) => {
+                const transformed = style.transform(val);
+                html += `
+                    <div class="font-card">
+                        <span class="font-name">${style.name}</span>
+                        <div class="font-output" id="font-out-${index}">${transformed}</div>
+                        <button class="btn btn-secondary" onclick="copyTextFromElement('font-out-${index}')" style="font-size:0.75rem; padding:0.3rem 0.6rem;">Copy</button>
+                    </div>
                 `;
-                container.appendChild(card);
-                document.getElementById(id).innerText = transformed;
             });
+            fontContainer.innerHTML = html;
         }
 
-        function copyCode(elemId) {
-            const text = document.getElementById(elemId).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied to clipboard!");
-            });
+        function copyTextFromElement(elemId) {
+            const txt = document.getElementById(elemId).innerText;
+            navigator.clipboard.writeText(txt);
+            alert("Copied: " + txt);
+        }
+
+        function extractColorPalette(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 50;
+                    canvas.height = 50;
+                    ctx.drawImage(img, 0, 0, 50, 50);
+
+                    const imgData = ctx.getImageData(0, 0, 50, 50).data;
+                    const colors = [];
+
+                    for (let i = 0; i < imgData.length; i += 40) {
+                        const r = imgData[i];
+                        const g = imgData[i+1];
+                        const b = imgData[i+2];
+                        const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                        if (!colors.includes(hex)) colors.push(hex);
+                        if (colors.length >= 5) break;
+                    }
+
+                    const swatchContainer = document.getElementById('swatch-container');
+                    swatchContainer.innerHTML = '';
+                    colors.forEach(hex => {
+                        const box = document.createElement('div');
+                        box.className = 'color-swatch';
+                        box.style.backgroundColor = hex;
+                        box.innerText = hex;
+                        box.onclick = () => {
+                            navigator.clipboard.writeText(hex);
+                            alert('Copied HEX color: ' + hex);
+                        };
+                        swatchContainer.appendChild(box);
+                    });
+
+                    const gradCode = `background: linear-gradient(135deg, ${colors[0] || '#ff0000'}, ${colors[1] || '#22d3ee'});`;
+                    document.getElementById('gradient-preview').style.background = `linear-gradient(135deg, ${colors[0] || '#ff0000'}, ${colors[1] || '#22d3ee'})`;
+                    document.getElementById('css-gradient-code').innerText = gradCode;
+                    document.getElementById('palette-result').style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function copyCode(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert("Code copied to clipboard!");
         }
 
         function calculateMilestone() {
@@ -1438,73 +1474,17 @@
             if (target <= current) {
                 document.getElementById('ms-out').innerText = "Target already reached!";
             } else if (daily <= 0) {
-                document.getElementById('ms-out').innerText = "Daily rate must be > 0";
+                document.getElementById('ms-out').innerText = "Daily rate must be greater than 0.";
             } else {
-                const diff = target - current;
-                const days = Math.ceil(diff / daily);
-                document.getElementById('ms-out').innerText = `${days} Days (approx. ${(days/30).toFixed(1)} Months)`;
+                const daysLeft = Math.ceil((target - current) / daily);
+                document.getElementById('ms-out').innerText = `${daysLeft} days (~${(daysLeft/30).toFixed(1)} months)`;
             }
             document.getElementById('ms-result').style.display = 'block';
         }
 
-        function extractColorPalette(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 100;
-                    canvas.height = 100;
-                    ctx.drawImage(img, 0, 0, 100, 100);
-
-                    const imgData = ctx.getImageData(0, 0, 100, 100).data;
-                    const colorCounts = {};
-
-                    for (let i = 0; i < imgData.length; i += 16) {
-                        const r = Math.round(imgData[i] / 32) * 32;
-                        const g = Math.round(imgData[i+1] / 32) * 32;
-                        const b = Math.round(imgData[i+2] / 32) * 32;
-                        const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-                        colorCounts[hex] = (colorCounts[hex] || 0) + 1;
-                    }
-
-                    const sortedHex = Object.keys(colorCounts).sort((a,b) => colorCounts[b] - colorCounts[a]).slice(0, 5);
-                    
-                    const swatchContainer = document.getElementById('swatch-container');
-                    swatchContainer.innerHTML = '';
-
-                    sortedHex.forEach(hex => {
-                        const swatch = document.createElement('div');
-                        swatch.className = 'color-swatch';
-                        swatch.style.backgroundColor = hex;
-                        swatch.innerText = hex;
-                        swatch.onclick = () => {
-                            navigator.clipboard.writeText(hex);
-                            alert(`Copied ${hex} to clipboard!`);
-                        };
-                        swatchContainer.appendChild(swatch);
-                    });
-
-                    if (sortedHex.length >= 2) {
-                        const gradCss = `background: linear-gradient(135deg, ${sortedHex[0]}, ${sortedHex[1]});`;
-                        document.getElementById('gradient-preview').style.cssText = gradCss;
-                        document.getElementById('css-gradient-code').innerText = gradCss;
-                    }
-
-                    document.getElementById('palette-result').style.display = 'block';
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
+        window.onload = function() {
             fetchLatestChannelContent();
-        });
+        };
     </script>
 </body>
 </html>
