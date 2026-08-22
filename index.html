@@ -406,40 +406,6 @@
             display: block;
         }
 
-        .font-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-            gap: 0.9rem;
-            margin-top: 1rem;
-        }
-
-        .font-card {
-            background: rgba(11, 13, 19, 0.7);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 0.9rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 0.6rem;
-        }
-
-        .font-name {
-            font-size: 0.75rem;
-            color: var(--accent-cyan);
-            font-weight: 600;
-        }
-
-        .font-output {
-            font-family: 'Segoe UI Symbol', 'Apple Color Emoji', 'Noto Sans', 'Segoe UI', Roboto, sans-serif;
-            font-size: 1.05rem;
-            color: #fff;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-            line-height: 1.4;
-            min-height: 2.2rem;
-        }
-
         .seo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
@@ -646,7 +612,7 @@
                         <div class="card-tag">Shorts & Highlights</div>
                         <h3 id="latest-short-title">Recent Uploaded Short</h3>
                         <div class="short-container">
-                            <iframe id="latest-short-frame" src="" title="Latest Short Video" allowfullscreen></iframe>
+                            <iframe id="latest-short-frame" src="https://www.youtube.com/embed/videoseries?list=PL1XuTk7AskldQKO-REY3u8enxRpplpTU0" title="Shorts Playlist" allowfullscreen></iframe>
                         </div>
                         <p id="latest-short-desc">Automatically displaying your most recent YouTube Short from your playlist...</p>
                     </div>
@@ -669,7 +635,6 @@
             <div class="tool-tabs">
                 <button class="tab-btn active" onclick="switchToolTab(event, 'tab-weekly-trend')">Weekly Keyword Analyzer</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-palette')">Color & Gradient Extractor</button>
-                <button class="tab-btn" onclick="switchToolTab(event, 'tab-font')">Text Stylizer (50 Fonts)</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-niche')">Niche Rankings & Trends</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-thumbnail')">Thumbnail Downloader</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-revenue')">Revenue Estimator</button>
@@ -734,22 +699,6 @@
                         <pre><code id="css-gradient-code" style="color: var(--accent-cyan); font-family: monospace; font-size: 0.8rem; white-space: pre-wrap;"></code></pre>
                         <button class="btn btn-secondary" onclick="copyCode('css-gradient-code')" style="margin-top: 0.6rem; font-size: 0.75rem;">Copy CSS Gradient Code</button>
                     </div>
-                </div>
-            </div>
-
-            <!-- TOOL: Gamer Text Stylizer (50 Fonts) -->
-            <div id="tab-font" class="tool-panel card">
-                <div>
-                    <div class="card-tag">Typography Suite</div>
-                    <h3>Gamer & Creator Text Stylizer (50 Fonts)</h3>
-                    <p>Type below to generate 50 clean, ASCII & Unicode fallback-ready font variants for social bios and comments.</p>
-                    <div class="input-group">
-                        <label for="text-input">Your Input Text:</label>
-                        <input type="text" id="text-input" class="input-field" placeholder="Type title or name here..." value="SharpDev Gaming" oninput="convertAllFonts()">
-                    </div>
-                </div>
-                <div id="text-result" class="result-box" style="display: block;">
-                    <div id="font-grid-container" class="font-grid"></div>
                 </div>
             </div>
 
@@ -950,7 +899,7 @@
                     throw new Error('Playlist empty or restricted');
                 }
             } catch (err) {
-                document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed?listType=playlist&list=${playlistId}`;
+                document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
             }
         }
 
@@ -1167,7 +1116,6 @@
             
             event.currentTarget.classList.add('active');
             document.getElementById(tabId).classList.add('active');
-            if(tabId === 'tab-font') convertAllFonts();
             if(tabId === 'tab-niche') loadNicheData();
             if(tabId === 'tab-weekly-trend') analyzeWeeklyKeyword();
         }
@@ -1311,103 +1259,6 @@
 
             document.getElementById('gd-out').innerText = code;
             document.getElementById('gd-result').style.display = 'block';
-        }
-
-        const fontStyles = [
-            { name: "1. Bold Sans", transform: t => mapChars(t, "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙", "𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳", "𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗") },
-            { name: "2. Monospace", transform: t => mapChars(t, "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉", "𝚊𝚋c𝚍e𝚏𝚐𝚑i𝚓k𝚕m𝚗o𝚙q𝚛s𝚝u𝚟w𝚡y𝚣", "𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟩𝟾𝟿") },
-            { name: "3. Script Aesthetic", transform: t => mapChars(t, "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵", "𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏", "0123456789") },
-            { name: "4. Bold Script", transform: t => mapChars(t, "𝓐𝓑𝓒𝓓𝓔𝓐𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟BR𝓢𝓣VU𝓥interXYZ", "𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝓩", "0123456789") },
-            { name: "5. Double Struck", transform: t => mapChars(t, "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ", "𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫", "𝟘𝟙𝟚𝟛𝟜𝕝𝟞𝟟𝟠𝟡") },
-            { name: "6. Fraktur Gothic", transform: t => mapChars(t, "𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔏𝔍𝔍𝔏𝔍𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏", "𝔞𝔟𝔠𝔡𝔢𝔣𝔤 वांछ𝔦𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷", "0123456789") },
-            { name: "7. Bold Fraktur", transform: t => mapChars(t, "𝕬𝕭𝕮𝕯𝕰𝕱𝕺𝕸𝕴Sn𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺", "𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟", "0123456789") },
-            { name: "8. Sans Serif Normal", transform: t => mapChars(t, "𝖠𝖡𝖢𝖖𝖤𝖥𝖦𝖧𝖨𝖵𝖭𝖫𝖬𝖭𝖮𝖯𝖰𝖱𝖲𝖳𝖴𝖵𝖶𝖷𝖸𝖹", "𝖺𝖻𝖼𝖽𝖾𝖿𝖻𝗁𝗂𝖺𝗄𝗅𝗆𝗇𝗈𝗉𝗊𝗋𝗌𝗍𝗎𝗏𝗐𝗑𝗒𝗓", "𝟢𝟣𝟤𝟥𝟦𝟧𝟨𝟩𝟪𝟫") },
-            { name: "9. Sans Bold Italic", transform: t => mapChars(t, "𝘼𝘽𝘾𝘿𝙀𝙁𝙂𝙃𝙄𝙅𝙆𝙇𝙈𝙉𝙊𝙋𝙌𝙍𝙎𝙏𝙐𝙑𝙎𝙯𝙔𝙁", "𝙖𝙗𝙘𝙙𝙚𝙛𝙜𝙝𝙞𝙟𝙠𝙡𝙢𝙣𝙤𝙥 drain𝙧𝙨𝙩𝙪𝙫𝙬𝙭𝙮𝙯", "0123456789") },
-            { name: "10. Small Caps", transform: t => mapChars(t, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ", "0123456789") },
-            { name: "11. Bracketed Gamer", transform: t => `⟦ ${t} ⟧` },
-            { name: "12. Cyber Neon", transform: t => `★彡 [${t}] 彡★` },
-            { name: "13. Gamer Tag", transform: t => `꧁༺ ${t} ༻꧂` },
-            { name: "14. Cross Slash", transform: t => t.split('').join('̷') },
-            { name: "15. Underline Clean", transform: t => t.split('').join('̲') },
-            { name: "16. Strikethrough", transform: t => t.split('').join('̶') },
-            { name: "17. Overline", transform: t => t.split('').join('̅') },
-            { name: "18. Tilde Wave", transform: t => `〰 ${t} 〰` },
-            { name: "19. Japanese Aesthetic", transform: t => `【 ${t} 】` },
-            { name: "20. Sparkle Accent", transform: t => `✨ ${t} ✨` },
-            { name: "21. Fire Emblem", transform: t => `🔥 ${t} 🔥` },
-            { name: "22. Sword Border", transform: t => `⚔️ ${t} ⚔️` },
-            { name: "23. Target Lock", transform: t => `🎯 ${t} 🎯` },
-            { name: "24. Crown Badge", transform: t => `👑 ${t} 👑` },
-            { name: "25. Skull Clan", transform: t => `💀 ${t} 💀` },
-            { name: "26. Shield Tag", transform: t => `🛡️ ${t} 🛡️` },
-            { name: "27. Lightning Aura", transform: t => `⚡ ${t} ⚡` },
-            { name: "28. Diamond Border", transform: t => `◈ ${t} ◈` },
-            { name: "29. Double Arrow", transform: t => `»» ${t} ««` },
-            { name: "30. Star Wings", transform: t => `★·.·´¯\`·.·★ ${t} ★·.·´¯\`·.·★` },
-            { name: "31. Corner Brackets", transform: t => `◤ ${t} ◢` },
-            { name: "32. Heavy Box", transform: t => `█▒▒ ${t} ▒▒█` },
-            { name: "33. Full Width", transform: t => t.replace(/[a-zA-Z0-9]/g, c => String.fromCharCode(c.charCodeAt(0) + 0xFEE0)) },
-            { name: "34. Superscript", transform: t => mapChars(t, "ᴬᴮᶜᴰᴱᴴᴵᴷᴸᴹᴺᴼᴾᴿᵀᵁⱽ", "ᵃᵇᶜᵈᵉᶠᵍʰʲᵏˡᵐⁿᵒᵖᑫʳˢᵗᵘᵛʷˣʸᶻ", "⁰¹²³⁴⁵⁶⁷⁸⁹") },
-            { name: "35. Subscript", transform: t => mapChars(t, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ₐᵦ𝒸𝒹ₑ𝒪fgₕᵢⱼₖₗₘₙₒₚqᵣₛₜᵤᵥ𝓌ₓyz", "₀₁₂₃₄₅₆₇₈₉") },
-            { name: "36. Reverse Text", transform: t => t.split('').reverse().join('') },
-            { name: "37. Dotted Outline", transform: t => t.split('').join('·') },
-            { name: "38. Space Out", transform: t => t.split('').join(' ') },
-            { name: "39. Double Space", transform: t => t.split('').join('  ') },
-            { name: "40. Arrow Pointer", transform: t => `➢ ${t}` },
-            { name: "41. Radioactivity", transform: t => `☢️ ${t} ☢️` },
-            { name: "42. Biohazard", transform: t => `☣️ ${t} ☣️` },
-            { name: "43. Controller", transform: t => `🎮 ${t} 🎮` },
-            { name: "44. Game Over", transform: t => `👾 ${t} 👾` },
-            { name: "45. Rocket Launch", transform: t => `🚀 ${t} 🚀` },
-            { name: "46. Trophy Gold", transform: t => `🏆 ${t} 🏆` },
-            { name: "47. Portal Void", transform: t => `🌀 ${t} 🌀` },
-            { name: "48. Crystal Gem", transform: t => `💎 ${t} 💎` },
-            { name: "49. Infinite Loop", transform: t => `♾️ ${t} ♾️` },
-            { name: "50. Trident Badge", transform: t => `🔱 ${t} 🔱` }
-        ];
-
-        function mapChars(str, upper, lower, digits) {
-            const stdUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const stdLower = "abcdefghijklmnopqrstuvwxyz";
-            const stdDigits = "0123456789";
-
-            let res = "";
-            for (let i = 0; i < str.length; i++) {
-                let c = str[i];
-                let uIdx = stdUpper.indexOf(c);
-                let lIdx = stdLower.indexOf(c);
-                let dIdx = stdDigits.indexOf(c);
-
-                if (uIdx !== -1 && upper) res += Array.from(upper)[uIdx] || c;
-                else if (lIdx !== -1 && lower) res += Array.from(lower)[lIdx] || c;
-                else if (dIdx !== -1 && digits) res += Array.from(digits)[dIdx] || c;
-                else res += c;
-            }
-            return res;
-        }
-
-        function convertAllFonts() {
-            const val = document.getElementById('text-input').value || "SharpDev Gaming";
-            const fontContainer = document.getElementById('font-grid-container');
-            
-            let html = "";
-            fontStyles.forEach((style, index) => {
-                const transformed = style.transform(val);
-                html += `
-                    <div class="font-card">
-                        <span class="font-name">${style.name}</span>
-                        <div class="font-output" id="font-out-${index}">${transformed}</div>
-                        <button class="btn btn-secondary" onclick="copyTextFromElement('font-out-${index}')" style="font-size:0.75rem; padding:0.3rem 0.6rem;">Copy</button>
-                    </div>
-                `;
-            });
-            fontContainer.innerHTML = html;
-        }
-
-        function copyTextFromElement(elemId) {
-            const txt = document.getElementById(elemId).innerText;
-            navigator.clipboard.writeText(txt);
-            alert("Copied: " + txt);
         }
 
         function extractColorPalette(e) {
