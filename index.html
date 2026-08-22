@@ -289,7 +289,7 @@
             overflow: hidden;
             border-radius: 12px;
             margin-bottom: 1rem;
-            background: rgba(0,0,0,0.5);
+            background: #000;
         }
 
         .video-container iframe {
@@ -309,7 +309,7 @@
             overflow: hidden;
             border-radius: 12px;
             margin-bottom: 1rem;
-            background: rgba(0,0,0,0.5);
+            background: #000;
         }
 
         .short-container iframe {
@@ -597,13 +597,13 @@
                 <div class="card">
                     <div>
                         <div class="card-tag">Latest Upload</div>
-                        <h3 id="latest-video-title">Latest Channel Videos</h3>
+                        <h3 id="latest-video-title">Latest Channel Upload</h3>
                         <div class="video-container">
-                            <iframe id="latest-video-frame" src="https://www.youtube.com/embed?listType=playlist&list=UUpa_XDcuNnq0InfiUe5OtHw" title="Latest Uploads" allowfullscreen></iframe>
+                            <iframe id="latest-video-frame" src="" title="Latest Upload" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
-                        <p id="latest-video-desc">Watch the latest long-form video uploads directly from @sharpdevgaming.</p>
+                        <p id="latest-video-desc">Watch our latest long-form upload directly from @sharpdevgaming.</p>
                     </div>
-                    <a id="latest-video-link" href="https://www.youtube.com/@sharpdevgaming/videos" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">Watch Videos &rarr;</a>
+                    <a id="latest-video-link" href="https://www.youtube.com/@sharpdevgaming/videos" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">Watch on YouTube &rarr;</a>
                 </div>
 
                 <!-- SHORTS PLAYLIST SECTION -->
@@ -612,11 +612,11 @@
                         <div class="card-tag">Shorts & Highlights</div>
                         <h3 id="latest-short-title">Recent Uploaded Short</h3>
                         <div class="short-container">
-                            <iframe id="latest-short-frame" src="https://www.youtube.com/embed/videoseries?list=PL1XuTk7AskldQKO-REY3u8enxRpplpTU0" title="Shorts Playlist" allowfullscreen></iframe>
+                            <iframe id="latest-short-frame" src="" title="Shorts Feed" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
-                        <p id="latest-short-desc">Automatically displaying your most recent YouTube Short from your playlist...</p>
+                        <p id="latest-short-desc">Displaying recent YouTube Short from your channel playlist.</p>
                     </div>
-                    <a id="latest-short-link" href="https://www.youtube.com/playlist?list=PL1XuTk7AskldQKO-REY3u8enxRpplpTU0" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View Playlist &rarr;</a>
+                    <a id="latest-short-link" href="https://www.youtube.com/@sharpdevgaming/shorts" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View All Shorts &rarr;</a>
                 </div>
             </div>
         </main>
@@ -856,49 +856,71 @@
 
     <script>
         let currentThumbnailUrl = '';
+        const CHANNEL_ID = 'UCpa_XDcuNnq0InfiUe5OtHw';
 
-        // AUTOMATIC CONTENT FETCH WITH ROBUST FALLBACKS
+        // Direct fetch via AllOrigins proxy to bypass CORS restrictions on YouTube XML feeds
         async function fetchLatestChannelContent() {
-            const channelId = 'UCpa_XDcuNnq0InfiUe5OtHw'; 
-            const playlistId = 'PL1XuTk7AskldQKO-REY3u8enxRpplpTU0';
-            
-            const channelRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-            const playlistRssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
-            
-            const channelApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(channelRssUrl)}`;
-            const playlistApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(playlistRssUrl)}`;
+            const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
-            // 1. FETCH LATEST LONG FORM VIDEO FROM CHANNEL
             try {
-                const response = await fetch(channelApiUrl);
+                const response = await fetch(proxyUrl);
                 const data = await response.json();
-                if (data.status === 'ok' && data.items && data.items.length > 0) {
-                    const latestVideo = data.items[0];
-                    const videoId = extractVideoId(latestVideo.link);
-                    document.getElementById('latest-video-title').innerText = latestVideo.title;
-                    document.getElementById('latest-video-frame').src = `https://www.youtube.com/embed/${videoId}?rel=0`;
-                    document.getElementById('latest-video-desc').innerText = `Watch our latest video upload on YouTube!`;
-                    document.getElementById('latest-video-link').href = latestVideo.link;
+                
+                if (data.contents) {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+                    const entries = xmlDoc.getElementsByTagName("entry");
+
+                    if (entries.length > 0) {
+                        let latestLongForm = null;
+                        let latestShort = null;
+
+                        for (let i = 0; i < entries.length; i++) {
+                            const entry = entries[i];
+                            const link = entry.getElementsByTagName("link")[0].getAttribute("href");
+                            const title = entry.getElementsByTagName("title")[0].textContent;
+                            const videoId = entry.getElementsByTagName("yt:videoId")[0].textContent;
+
+                            if (title.toLowerCase().includes("#shorts") || title.toLowerCase().includes("#short")) {
+                                if (!latestShort) latestShort = { id: videoId, title: title, link: link };
+                            } else {
+                                if (!latestLongForm) latestLongForm = { id: videoId, title: title, link: link };
+                            }
+
+                            if (latestLongForm && latestShort) break;
+                        }
+
+                        // Fallback if no short hashtag detected, use first entry for video
+                        if (!latestLongForm && entries[0]) {
+                            const firstEntry = entries[0];
+                            latestLongForm = {
+                                id: firstEntry.getElementsByTagName("yt:videoId")[0].textContent,
+                                title: firstEntry.getElementsByTagName("title")[0].textContent,
+                                link: firstEntry.getElementsByTagName("link")[0].getAttribute("href")
+                            };
+                        }
+
+                        if (latestLongForm) {
+                            document.getElementById('latest-video-title').innerText = latestLongForm.title;
+                            document.getElementById('latest-video-frame').src = `https://www.youtube-nocookie.com/embed/${latestLongForm.id}`;
+                            document.getElementById('latest-video-link').href = latestLongForm.link;
+                        }
+
+                        if (latestShort) {
+                            document.getElementById('latest-short-title').innerText = latestShort.title;
+                            document.getElementById('latest-short-frame').src = `https://www.youtube-nocookie.com/embed/${latestShort.id}`;
+                            document.getElementById('latest-short-link').href = latestShort.link;
+                        } else {
+                            // Default to first video if no specific shorts found
+                            document.getElementById('latest-short-frame').src = `https://www.youtube-nocookie.com/embed/${entries[0].getElementsByTagName("yt:videoId")[0].textContent}`;
+                        }
+                    }
                 }
             } catch (err) {
-                // Fallback to Channel Uploads Playlist Embed if API is restricted or rate-limited
-                document.getElementById('latest-video-frame').src = `https://www.youtube.com/embed?listType=playlist&list=UUpa_XDcuNnq0InfiUe5OtHw`;
-            }
-
-            // 2. FETCH RECENT SHORT DIRECTLY FROM YOUR PLAYLIST
-            try {
-                const response = await fetch(playlistApiUrl);
-                const data = await response.json();
-                if (data.status === 'ok' && data.items && data.items.length > 0) {
-                    const recentShort = data.items[0];
-                    const shortId = extractVideoId(recentShort.link);
-                    document.getElementById('latest-short-title').innerText = recentShort.title;
-                    document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/${shortId}?rel=0`;
-                    document.getElementById('latest-short-desc').innerText = `Latest video from the Shorts playlist!`;
-                    document.getElementById('latest-short-link').href = recentShort.link;
-                }
-            } catch (err) {
-                document.getElementById('latest-short-frame').src = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
+                // Guaranteed fallback logic directly pointing to your channel's public feed link
+                document.getElementById('latest-video-desc').innerText = "Visit our YouTube page directly to view all recent long-form uploads.";
+                document.getElementById('latest-video-frame').src = "about:blank";
             }
         }
 
