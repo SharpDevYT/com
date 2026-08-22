@@ -1328,86 +1328,78 @@
             { name: "1. Bold Sans", transform: t => mapChars(t, "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙", "𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳", "𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗") },
             { name: "2. Monospace", transform: t => mapChars(t, "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉", "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣", "𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟩𝟾𝟿") },
             { name: "3. Script Aesthetic", transform: t => mapChars(t, "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵", "𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏", "0123456789") },
-            { name: "4. Bold Script", transform: t => mapChars(t, "𝓐𝓑𝓒𝓓𝓔𝓐𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟BR𝓢𝓣VU𝓥interXYZ", "𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹 any𝓻𝓼𝓽𝓾𝓿𝔀x𝔂𝔃", "0123456789") },
-            { name: "5. Gothic / Fraktur", transform: t => mapChars(t, "𝔄𝔅ℭ𝔇𝔈𝔉𝔤ℌℑ𝔍𝔏𝔁MN𝔓ℜ𝔖𝔗𝔘VWXYℨ", "𝔞𝔟𝔠𝔡𝔢𝔣g𝔦a𝔨𝔩𝔪𝔬𝔭𝔯𝔰𝔱𝔳wxy", "0123456789") },
-            { name: "6. Bold Gothic", transform: t => mapChars(t, "𝕬𝕭𝕮𝕯𝕰𝕱 anyI anyKANYMNO anyQANYANYTUVWXYZ", "𝖆𝖇𝖈𝖉𝖊𝖋g𝔦a𝖐𝖑𝖒𝖓𝖔𝖕q𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟", "0123456789") },
-            { name: "7. Double Struck", transform: t => mapChars(t, "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ", "𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫", "𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡") },
-            { name: "8. Small Caps", transform: t => mapChars(t, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789", true) },
-            { name: "9. Circled Dark", transform: t => mapChars(t, "🅐🅑🅒🅓🅔🅕🅖🅨🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅯🅧🅨🅩", "🅐🅑🅒🅓🅔🅕🅖🅨🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅯🅧🅨🅩", "0123456789") },
-            { name: "10. Circled Light", transform: t => mapChars(t, "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ", "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ", "⓪①②③④⑤⑥⑦⑧⑨") },
-            { name: "11. Squared Dark", transform: t => mapChars(t, "🅰🅱🅲🅞🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🅑🆁🅢🅣🅄🅥🅯🅧🆈🆉", "🅰🅱🅲🅞🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🅑🆁🅢🅣🅄🅥🅯🅧🆈🆉", "0123456789") },
+            { name: "4. Bold Script", transform: t => mapChars(t, "𝓐𝓑𝓒𝓓𝓔𝓐𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟BR𝓢𝓣VU𝓥interXYZ", "𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝓩", "0123456789") },
+            { name: "5. Double Struck", transform: t => mapChars(t, "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ", "𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫", "𝟘𝟙𝟚𝟛𝟜𝕝𝟞𝟟𝟠𝟡") },
+            { name: "6. Fraktur Gothic", transform: t => mapChars(t, "𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔏𝔍𝔍𝔏𝔍𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏𝔏", "𝔞𝔟𝔠𝔡𝔢𝔣𝔤 वांछ𝔦𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷", "0123456789") },
+            { name: "7. Bold Fraktur", transform: t => mapChars(t, "𝕬𝕭𝕮𝕯𝕰𝕱𝕺𝕸𝕴Sn𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺𝕺", "𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟", "0123456789") },
+            { name: "8. Circled Dark", transform: t => mapChars(t, "🅐🅑🅒🅓🅔🅕🅖packages🅘🅙kt🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅯 any🅨🅩", "🅐🅑🅒🅓🅔🅕🅖packages🅘🅙kt🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅯 any🅨🅩", "⓿➊➋➌➍➎➏➐➑➒") },
+            { name: "9. Circled White", transform: t => mapChars(t, "ⒶⒷⒸⒹⒺ⒡ⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ", "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ", "⓪①②③④⑤⑥⑦⑧⑨") },
+            { name: "10. Squared Dark", transform: t => mapChars(t, "🅰🅱🅂🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼 any🄾🄿🅀2🅂🅃🅄🅠🅆 any🅈🅩", "🅰🅱🅂🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼 any🄾🄿🅀2🅂🅃🅄🅠🅆 any🅈🅩", "0123456789") },
+            { name: "11. Small Caps", transform: t => mapChars(t, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ", "0123456789") },
             { name: "12. Superscript", transform: t => mapChars(t, "ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾQᴿˢᵀᵁⱽᵂˣʸᶻ", "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖqʳˢᵗᵘᵛʷˣʸᶻ", "⁰¹²³⁴⁵⁶⁷⁸⁹") },
-            { name: "13. Subscript", transform: t => mapChars(t, "ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ", "ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ", "₀₁₂₃₄₅₆₇₈₉") },
-            { name: "14. Strikethrough", transform: t => t.split('').join('\u0336') },
-            { name: "15. Underlined", transform: t => t.split('').join('\u0332') },
-            { name: "16. Slash Through", transform: t => t.split('').join('\u0337') },
-            { name: "17. Dotted Upper", transform: t => t.split('').join('\u0307') },
-            { name: "18. Vaporwave Wide", transform: t => t.split('').map(c => c.charCodeAt(0) >= 33 && c.charCodeAt(0) <= 126 ? String.fromCharCode(c.charCodeAt(0) + 65248) : c).join('') },
-            { name: "19. Upside Down", transform: t => flipText(t) },
-            { name: "20. Reversed", transform: t => t.split('').reverse().join('') },
-            { name: "21. Bracketed", transform: t => t.split('').map(c => c.trim() ? `[${c}]` : ' ').join('') },
-            { name: "22. Heart Wrapped", transform: t => `♥ ${t} ♥` },
-            { name: "23. Star Wrapped", transform: t => `★ ${t} ★` },
-            { name: "24. Sparkle Framing", transform: t => `✨ ${t} ✨` },
-            { name: "25. Skull Prefix", transform: t => `💀 ${t} 💀` },
-            { name: "26. Gaming Crosshairs", transform: t => `🎯 ${t} 🎯` },
-            { name: "27. Fire Aesthetics", transform: t => `🔥 ${t} 🔥` },
-            { name: "28. Neon Glow Effect", transform: t => `⚡ ${t} ⚡` },
-            { name: "29. Diamond Edge", transform: t => `💎 ${t} 💎` },
-            { name: "30. Crown Royal", transform: t => `👑 ${t} 👑` },
-            { name: "31. Glitch Aesthetic 1", transform: t => t.split('').map(c => c + '\u0300\u0310').join('') },
-            { name: "32. Glitch Aesthetic 2", transform: t => t.split('').map(c => c + '\u033f\u035c').join('') },
-            { name: "33. Bold Italic Sans", transform: t => mapChars(t, "𝘼𝘽𝘾𝘿𝙀𝙁𝙂𝙃𝙄𝙅𝙆𝙇𝙈𝙉𝙊𝙋𝙌𝙍𝙎𝙏𝙐𝙑𝙎𝙯𝙔𝙕", "𝙖𝙗𝙘𝙙𝙚𝙛𝙜𝙝𝙞𝙟𝙠𝙡𝙢𝙣𝙤𝙥𝙦𝙧𝙨𝙩𝙪𝙫𝙬𝙭𝙮𝙯", "0123456789") },
-            { name: "34. Italic Sans", transform: t => mapChars(t, "𝘈𝘉𝘠𝘋𝘌𝘍𝘎𝘏𝘐𝘵𝘒𝘓𝘔𝘞𝘖𝘫𝘎𝘘𝘙𝘲𝘍𝘜𝘝𝘞𝘌𝘎𝘲", "𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻", "0123456789") },
-            { name: "35. Bold Serif", transform: t => mapChars(t, "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙", "𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳", "0123456789") },
-            { name: "36. Italic Serif", transform: t => mapChars(t, "𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍", "𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑞𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧", "0123456789") },
-            { name: "37. Cyber Space", transform: t => `[ 𝒞𝒴𝒬𝒴ℛ ] ${t}` },
-            { name: "38. Cross Symbol", transform: t => t.split('').map(c => c + '⚔️').join('') },
-            { name: "39. Dot Separated", transform: t => t.split('').join('•') },
-            { name: "40. Space Separated", transform: t => t.split('').join(' ') },
-            { name: "41. Double Space", transform: t => t.split('').join('  ') },
-            { name: "42. Arrow Framing", transform: t => `➽ ${t} ➽` },
-            { name: "43. Wings Framing", transform: t => `꧁༺ ${t} ༻꧂` },
-            { name: "44. Shield Guard", transform: t => `🛡️ ${t} 🛡️` },
-            { name: "45. Lightning Edge", transform: t => `⚡ ${t} ⚡` },
-            { name: "46. Cyber Bracket", transform: t => `【 ${t} 】` },
-            { name: "47. Japanese Bracket", transform: t => `『 ${t} 』` },
-            { name: "48. Wave Accent", transform: t => `〰️ ${t} 〰️` },
-            { name: "49. Bio Tag Line", transform: t => `┊ ${t} ┊` },
-            { name: "50. Minimal Border", transform: t => `| ${t} |` }
+            { name: "13. Subscript", transform: t => mapChars(t, "ₐBCDₑFGₕᵢⱼₖₗₘₙₒₚQᵣₛₜᵤᵥWₓYZ", "ₐbcdₑfgₕᵢⱼₖₗₘₙₒₚqᵣₛₜᵤᵥwₓyz", "₀₁₂₃₄₅₆₇₈₉") },
+            { name: "14. Upside Down", transform: t => flipText(t) },
+            { name: "15. Vaporwave Wide", transform: t => t.split('').map(c => c.charCodeAt(0) >= 33 && c.charCodeAt(0) <= 126 ? String.fromCharCode(c.charCodeAt(0) + 65248) : c).join('') },
+            { name: "16. Cyber Bracket", transform: t => `【${t}】` },
+            { name: "17. Japanese Aesthetic", transform: t => `『${t}』` },
+            { name: "18. Sparkle Glitch", transform: t => `✧･ﾟ:${t}:･ﾟ✧` },
+            { name: "19. Cross Strikethrough", transform: t => t.split('').join('̵') },
+            { name: "20. Slash Strikethrough", transform: t => t.split('').join('̷') },
+            { name: "21. Underline Double", transform: t => t.split('').join('̳') },
+            { name: "22. Dotted Above", transform: t => t.split('').join('̇') },
+            { name: "23. Arrow Surround", transform: t => `➼ ${t} ➼` },
+            { name: "24. Gamer Tag Cross", transform: t => `⚔️ ${t} ⚔️` },
+            { name: "25. Crown Regal", transform: t => `👑 ${t} 👑` },
+            { name: "26. Diamond Luxury", transform: t => `💎 ${t} 💎` },
+            { name: "27. Fire Hot", transform: t => `🔥 ${t} 🔥` },
+            { name: "28. Skull Hardcore", transform: t => `☠️ ${t} ☠️` },
+            { name: "29. Lightning Speed", transform: t => `⚡ ${t} ⚡` },
+            { name: "30. Star Hero", transform: t => `★ ${t} ★` },
+            { name: "31. Target Aim", transform: t => `🎯 ${t} 🎯` },
+            { name: "32. Biohazard Tactical", transform: t => `☣️ ${t} ☣️` },
+            { name: "33. Shield Armor", transform: t => `🛡️ ${t} 🛡️` },
+            { name: "34. Rocket Speedrun", transform: t => `🚀 ${t} 🚀` },
+            { name: "35. Ghost Phantom", transform: t => `👻 ${t} 👻` },
+            { name: "36. Glitch Slash", transform: t => t.split('').join('҂') },
+            { name: "37. Overline Bar", transform: t => t.split('').join('̅') },
+            { name: "38. Tilde Wave", transform: t => `〰️ ${t} 〰️` },
+            { name: "39. Double Arrow", transform: t => `« ${t} »` },
+            { name: "40. Math Angle", transform: t => `⟨ ${t} ⟩` },
+            { name: "41. Dot Matrix", transform: t => t.split('').join('·') },
+            { name: "42. Spaced Out", transform: t => t.split('').join(' ') },
+            { name: "43. Heart Aesthetic", transform: t => `♥ ${t} ♥` },
+            { name: "44. Check Verified", transform: t => `✔ ${t}` },
+            { name: "45. Radioisotope Danger", transform: t => `☢️ ${t} ☢️` },
+            { name: "46. Infinity Cycle", transform: t => `♾️ ${t} ♾️` },
+            { name: "47. Gamepad Retro", transform: t => `🎮 ${t} 🎮` },
+            { name: "48. Neon Glow Box", transform: t => `░▒▓ ${t} ▓▒░` },
+            { name: "49. Block Border", transform: t => `█▓▒░ ${t} ░▒▓█` },
+            { name: "50. SharpDev Sign", transform: t => `[ ⚡ ${t} ⚡ ]` }
         ];
 
-        function mapChars(str, upperMap, lowerMap, numMap, isSmallCaps=false) {
-            const upperOrig = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const lowerOrig = "abcdefghijklmnopqrstuvwxyz";
-            const numOrig   = "0123456789";
+        function mapChars(text, upperMap, lowerMap, numMap) {
+            const stdUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const stdLower = "abcdefghijklmnopqrstuvwxyz";
+            const stdNum   = "0123456789";
             
-            if(isSmallCaps) {
-                const smallCaps = "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ";
-                return str.split('').map(c => {
-                    let idx = lowerOrig.indexOf(c.toLowerCase());
-                    return idx !== -1 ? smallCaps[idx] : c;
-                }).join('');
-            }
-
-            return str.split('').map(c => {
-                let uIdx = upperOrig.indexOf(c);
-                if (uIdx !== -1 && upperMap[uIdx]) return upperMap[uIdx];
-                let lIdx = lowerOrig.indexOf(c);
-                if (lIdx !== -1 && lowerMap[lIdx]) return lowerMap[lIdx];
-                let nIdx = numOrig.indexOf(c);
-                if (nIdx !== -1 && numMap[nIdx]) return numMap[nIdx];
+            return text.split('').map(c => {
+                let uIdx = stdUpper.indexOf(c);
+                if(uIdx !== -1) return Array.from(upperMap)[uIdx] || c;
+                let lIdx = stdLower.indexOf(c);
+                if(lIdx !== -1) return Array.from(lowerMap)[lIdx] || c;
+                let nIdx = stdNum.indexOf(c);
+                if(nIdx !== -1) return Array.from(numMap)[nIdx] || c;
                 return c;
             }).join('');
         }
 
-        function flipText(str) {
+        function flipText(text) {
             const normal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            const flipped = "ɐqɔpǝɟɓɥᴉɾʞlɯuodbɹsʇnʌʍxʎz∀ꓛꓷƎℲꓨHIſꓞꓡWNꓳԀꓯꓤSꓠ∩ɅꓪX⅄ꓵ0ƖᄅƐㄣϛ9ㄥ86";
-            return str.split('').map(c => {
+            const flipped = "ɐqɔpǝɟƃɥᴉɾʞlɯudodɹsʇnʌʍxʎz∀qƆpƎℲפHIſʞ˥WNOԀΌᴚS┴∩ΛMX⅄Z0ƖᄅƐㄣϛ9ㄥ86";
+            return text.split('').reverse().map(c => {
                 let idx = normal.indexOf(c);
                 return idx !== -1 ? flipped[idx] : c;
-            }).reverse().join('');
+            }).join('');
         }
 
         function convertAllFonts() {
@@ -1415,32 +1407,49 @@
             const container = document.getElementById('font-grid-container');
             container.innerHTML = '';
 
-            fontStyles.forEach((st, i) => {
-                const converted = st.transform(val);
+            fontStyles.forEach((styleObj, index) => {
+                const transformed = styleObj.transform(val);
+                const id = `font-out-${index}`;
+                
                 const card = document.createElement('div');
                 card.className = 'font-card';
                 card.innerHTML = `
-                    <span class="font-name">${st.name}</span>
-                    <div class="font-output" id="font-out-${i}">${escapeHtml(converted)}</div>
-                    <button class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;" onclick="copyFontText(${i})">Copy Style</button>
+                    <span class="font-name">${styleObj.name}</span>
+                    <div class="font-output" id="${id}"></div>
+                    <button class="btn btn-secondary" onclick="copyCode('${id}')" style="font-size: 0.75rem; padding: 0.35rem 0.6rem; margin-top:0.4rem;">Copy</button>
                 `;
                 container.appendChild(card);
+                document.getElementById(id).innerText = transformed;
             });
         }
 
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        function copyCode(elemId) {
+            const text = document.getElementById(elemId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard!");
+            });
         }
 
-        function copyFontText(idx) {
-            const text = document.getElementById(`font-out-${idx}`).innerText;
-            navigator.clipboard.writeText(text);
-            alert("Copied styled text to clipboard!");
+        function calculateMilestone() {
+            const current = parseFloat(document.getElementById('ms-current').value) || 0;
+            const target = parseFloat(document.getElementById('ms-target').value) || 1000;
+            const daily = parseFloat(document.getElementById('ms-daily').value) || 1;
+
+            if (target <= current) {
+                document.getElementById('ms-out').innerText = "Target already reached!";
+            } else if (daily <= 0) {
+                document.getElementById('ms-out').innerText = "Daily rate must be > 0";
+            } else {
+                const diff = target - current;
+                const days = Math.ceil(diff / daily);
+                document.getElementById('ms-out').innerText = `${days} Days (approx. ${(days/30).toFixed(1)} Months)`;
+            }
+            document.getElementById('ms-result').style.display = 'block';
         }
 
         function extractColorPalette(event) {
             const file = event.target.files[0];
-            if(!file) return;
+            if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1455,31 +1464,32 @@
                     const imgData = ctx.getImageData(0, 0, 100, 100).data;
                     const colorCounts = {};
 
-                    for(let i=0; i<imgData.length; i+=16) {
-                        const r = imgData[i];
-                        const g = imgData[i+1];
-                        const b = imgData[i+2];
+                    for (let i = 0; i < imgData.length; i += 16) {
+                        const r = Math.round(imgData[i] / 32) * 32;
+                        const g = Math.round(imgData[i+1] / 32) * 32;
+                        const b = Math.round(imgData[i+2] / 32) * 32;
                         const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
                         colorCounts[hex] = (colorCounts[hex] || 0) + 1;
                     }
 
                     const sortedHex = Object.keys(colorCounts).sort((a,b) => colorCounts[b] - colorCounts[a]).slice(0, 5);
                     
-                    const swatchBox = document.getElementById('swatch-container');
-                    swatchBox.innerHTML = '';
+                    const swatchContainer = document.getElementById('swatch-container');
+                    swatchContainer.innerHTML = '';
+
                     sortedHex.forEach(hex => {
-                        const sw = document.createElement('div');
-                        sw.className = 'color-swatch';
-                        sw.style.backgroundColor = hex;
-                        sw.innerText = hex;
-                        sw.onclick = () => {
+                        const swatch = document.createElement('div');
+                        swatch.className = 'color-swatch';
+                        swatch.style.backgroundColor = hex;
+                        swatch.innerText = hex;
+                        swatch.onclick = () => {
                             navigator.clipboard.writeText(hex);
                             alert(`Copied ${hex} to clipboard!`);
                         };
-                        swatchBox.appendChild(sw);
+                        swatchContainer.appendChild(swatch);
                     });
 
-                    if(sortedHex.length >= 2) {
+                    if (sortedHex.length >= 2) {
                         const gradCss = `background: linear-gradient(135deg, ${sortedHex[0]}, ${sortedHex[1]});`;
                         document.getElementById('gradient-preview').style.cssText = gradCss;
                         document.getElementById('css-gradient-code').innerText = gradCss;
@@ -1492,31 +1502,8 @@
             reader.readAsDataURL(file);
         }
 
-        function calculateMilestone() {
-            const current = parseFloat(document.getElementById('ms-current').value) || 0;
-            const target = parseFloat(document.getElementById('ms-target').value) || 0;
-            const daily = parseFloat(document.getElementById('ms-daily').value) || 1;
-
-            if (target <= current) {
-                document.getElementById('ms-out').innerText = "Target already reached!";
-            } else {
-                const days = Math.ceil((target - current) / daily);
-                document.getElementById('ms-out').innerText = `${days} days (~${(days/30).toFixed(1)} months)`;
-            }
-            document.getElementById('ms-result').style.display = 'block';
-        }
-
-        function copyCode(elementId) {
-            const codeText = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(codeText);
-            alert("Code snippet copied to clipboard!");
-        }
-
         window.addEventListener('DOMContentLoaded', () => {
             fetchLatestChannelContent();
-            loadNicheData();
-            convertAllFonts();
-            analyzeWeeklyKeyword();
         });
     </script>
 </body>
