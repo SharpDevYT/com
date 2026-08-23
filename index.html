@@ -884,7 +884,6 @@
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-niche')"><span class="tab-icon">📊</span>Niche Rankings & Trends</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-thumbnail')"><span class="tab-icon">🖼️</span>Thumbnail Downloader</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-img-convert')"><span class="tab-icon">🖼️</span>Image Format Converter</button>
-                <button class="tab-btn" onclick="switchToolTab(event, 'tab-media-extract')"><span class="tab-icon">🎬</span>Audio & GIF Extractor</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-revenue')"><span class="tab-icon">💰</span>Revenue Estimator</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-gdscript')"><span class="tab-icon">🧩</span>GDScript Generator</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-milestone')"><span class="tab-icon">🎯</span>Milestone Calculator</button>
@@ -1041,37 +1040,6 @@
                 </div>
             </div>
 
-            <!-- TAB 2: AUDIO & GIF MEDIA EXTRACTOR (FFMPEG.WASM CDN) -->
-            <div id="tab-media-extract" class="tool-panel card">
-                <div>
-                    <div class="card-tag">In-Browser Media Engine</div>
-                    <h3>Audio & GIF Media Extractor</h3>
-                    <p>Convert videos to MP3 audio files or short animated GIFs entirely in your browser memory.</p>
-                    
-                    <div class="input-group">
-                        <label for="media-file">Select Input Video/Audio File:</label>
-                        <input type="file" id="media-file" accept="video/*,audio/*" class="input-field">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="media-target-action">Extraction Task:</label>
-                        <select id="media-target-action" class="input-field" style="background: #0b0d13;">
-                            <option value="mp3">Extract Audio to MP3 (.mp3)</option>
-                            <option value="gif">Convert Clip to GIF (.gif)</option>
-                        </select>
-                    </div>
-
-                    <button id="media-convert-btn" class="btn btn-primary" onclick="extractMediaInBrowser()">Process Media File</button>
-                </div>
-
-                <div id="media-result" class="result-box">
-                    <p id="media-status-text" style="font-size: 0.9rem; color: var(--accent-cyan); font-weight: 600;"></p>
-                    <div id="media-dl-container" style="margin-top: 0.8rem; display: none;">
-                        <a id="media-dl-btn" class="btn btn-primary" download>⬇️ Download Extracted File</a>
-                    </div>
-                </div>
-            </div>
-
             <!-- TOOL: Revenue Estimator -->
             <div id="tab-revenue" class="tool-panel card">
                 <div>
@@ -1168,9 +1136,6 @@
     <footer>
         <p>&copy; 2026 SharpDev Gaming. Official site hosted at <a href="https://sharpdevyt.github.io/com/" target="_blank" rel="noopener noreferrer">sharpdevyt.github.io/com</a></p>
     </footer>
-
-    <!-- FFMPEG.WASM CDN FOR CLIENT-SIDE MEDIA PROCESSING -->
-    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
 
     <script>
         let currentThumbnailUrl = '';
@@ -1717,7 +1682,7 @@
             }
         }
 
-        // --- NEW TAB 1: CLIENT-SIDE IMAGE FORMAT CONVERTER LOGIC ---
+        // --- CLIENT-SIDE IMAGE FORMAT CONVERTER LOGIC ---
         function convertImageFormat() {
             const fileInput = document.getElementById('img-conv-file');
             const targetMime = document.getElementById('img-target-format').value;
@@ -1763,76 +1728,6 @@
             };
 
             reader.readAsDataURL(file);
-        }
-
-        // --- NEW TAB 2: IN-BROWSER FFMPEG MEDIA EXTRACTOR LOGIC ---
-        let ffmpegInstance = null;
-
-        async function extractMediaInBrowser() {
-            const mediaInput = document.getElementById('media-file');
-            const action = document.getElementById('media-target-action').value;
-            const statusText = document.getElementById('media-status-text');
-            const dlContainer = document.getElementById('media-dl-container');
-            const dlBtn = document.getElementById('media-dl-btn');
-            const convertBtn = document.getElementById('media-convert-btn');
-
-            if (!mediaInput.files || mediaInput.files.length === 0) {
-                alert("Please select a video or audio file first.");
-                return;
-            }
-
-            const file = mediaInput.files[0];
-            document.getElementById('media-result').style.display = 'block';
-            dlContainer.style.display = 'none';
-            convertBtn.disabled = true;
-            statusText.innerText = "Loading WebAssembly Media Engine...";
-
-            try {
-                const { createFFmpeg, fetchFile } = FFmpeg;
-                if (!ffmpegInstance) {
-                    ffmpegInstance = createFFmpeg({ log: false });
-                }
-
-                if (!ffmpegInstance.isLoaded()) {
-                    await ffmpegInstance.load();
-                }
-
-                statusText.innerText = "Processing file inside browser memory...";
-
-                const inputName = 'input_' + Date.now() + '_' + file.name;
-                ffmpegInstance.FS('writeFile', inputName, await fetchFile(file));
-
-                let outputName = 'output_' + Date.now();
-                let mimeType = '';
-
-                if (action === 'mp3') {
-                    outputName += '.mp3';
-                    mimeType = 'audio/mp3';
-                    await ffmpegInstance.run('-i', inputName, '-vn', '-ab', '192k', outputName);
-                } else if (action === 'gif') {
-                    outputName += '.gif';
-                    mimeType = 'image/gif';
-                    await ffmpegInstance.run('-i', inputName, '-t', '5', '-vf', 'fps=10,scale=320:-1:flags=lanczos', outputName);
-                }
-
-                const data = ffmpegInstance.FS('readFile', outputName);
-                const blob = new Blob([data.buffer], { type: mimeType });
-                const blobUrl = URL.createObjectURL(blob);
-
-                dlBtn.href = blobUrl;
-                dlBtn.download = outputName;
-                dlContainer.style.display = 'block';
-                statusText.innerText = "Extraction complete! Download your file below:";
-
-                ffmpegInstance.FS('unlink', inputName);
-                ffmpegInstance.FS('unlink', outputName);
-
-            } catch (err) {
-                console.error(err);
-                statusText.innerText = "Error converting media file. Make sure your browser supports WebAssembly.";
-            } finally {
-                convertBtn.disabled = false;
-            }
         }
 
         function calculateRevenue() {
