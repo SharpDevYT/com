@@ -883,6 +883,8 @@
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-palette')"><span class="tab-icon">🎨</span>Color & Gradient Extractor</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-niche')"><span class="tab-icon">📊</span>Niche Rankings & Trends</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-thumbnail')"><span class="tab-icon">🖼️</span>Thumbnail Downloader</button>
+                <button class="tab-btn" onclick="switchToolTab(event, 'tab-img-convert')"><span class="tab-icon">🖼️</span>Image Format Converter</button>
+                <button class="tab-btn" onclick="switchToolTab(event, 'tab-media-extract')"><span class="tab-icon">🎬</span>Audio & GIF Extractor</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-revenue')"><span class="tab-icon">💰</span>Revenue Estimator</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-gdscript')"><span class="tab-icon">🧩</span>GDScript Generator</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-milestone')"><span class="tab-icon">🎯</span>Milestone Calculator</button>
@@ -1005,6 +1007,71 @@
                 </div>
             </div>
 
+            <!-- TAB 1: CLIENT-SIDE IMAGE FORMAT CONVERTER -->
+            <div id="tab-img-convert" class="tool-panel card">
+                <div>
+                    <div class="card-tag">Asset Utility</div>
+                    <h3>Client-Side Image Format Converter</h3>
+                    <p>Convert local image files between web formats offline using Canvas rendering (no file upload to server required).</p>
+                    
+                    <div class="input-group">
+                        <label for="img-conv-file">Select Image File (PNG, JPG, WEBP, BMP):</label>
+                        <input type="file" id="img-conv-file" accept="image/*" class="input-field">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="img-target-format">Target Output Format:</label>
+                        <select id="img-target-format" class="input-field" style="background: #0b0d13;">
+                            <option value="image/png">PNG (.png)</option>
+                            <option value="image/jpeg">JPG / JPEG (.jpg)</option>
+                            <option value="image/webp">WEBP (.webp)</option>
+                            <option value="image/bmp">BMP (.bmp)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="convertImageFormat()">Convert Image Format</button>
+                </div>
+
+                <div id="img-conv-result" class="result-box">
+                    <h4 style="color: #fff; font-size: 0.95rem;">Conversion Complete!</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;" id="img-conv-info"></p>
+                    <div style="margin-top: 0.8rem;">
+                        <a id="img-conv-download" class="btn btn-primary" download="converted_image">⬇️ Download Converted Image</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: AUDIO & GIF MEDIA EXTRACTOR (FFMPEG.WASM CDN) -->
+            <div id="tab-media-extract" class="tool-panel card">
+                <div>
+                    <div class="card-tag">In-Browser Media Engine</div>
+                    <h3>Audio & GIF Media Extractor</h3>
+                    <p>Convert videos to MP3 audio files or short animated GIFs entirely in your browser memory.</p>
+                    
+                    <div class="input-group">
+                        <label for="media-file">Select Input Video/Audio File:</label>
+                        <input type="file" id="media-file" accept="video/*,audio/*" class="input-field">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="media-target-action">Extraction Task:</label>
+                        <select id="media-target-action" class="input-field" style="background: #0b0d13;">
+                            <option value="mp3">Extract Audio to MP3 (.mp3)</option>
+                            <option value="gif">Convert Clip to GIF (.gif)</option>
+                        </select>
+                    </div>
+
+                    <button id="media-convert-btn" class="btn btn-primary" onclick="extractMediaInBrowser()">Process Media File</button>
+                </div>
+
+                <div id="media-result" class="result-box">
+                    <p id="media-status-text" style="font-size: 0.9rem; color: var(--accent-cyan); font-weight: 600;"></p>
+                    <div id="media-dl-container" style="margin-top: 0.8rem; display: none;">
+                        <a id="media-dl-btn" class="btn btn-primary" download>⬇️ Download Extracted File</a>
+                    </div>
+                </div>
+            </div>
+
             <!-- TOOL: Revenue Estimator -->
             <div id="tab-revenue" class="tool-panel card">
                 <div>
@@ -1102,6 +1169,9 @@
         <p>&copy; 2026 SharpDev Gaming. Official site hosted at <a href="https://sharpdevyt.github.io/com/" target="_blank" rel="noopener noreferrer">sharpdevyt.github.io/com</a></p>
     </footer>
 
+    <!-- FFMPEG.WASM CDN FOR CLIENT-SIDE MEDIA PROCESSING -->
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+
     <script>
         let currentThumbnailUrl = '';
 
@@ -1129,7 +1199,6 @@
                     document.getElementById('latest-video-link').href = latestVideo.link;
                 }
             } catch (err) {
-                // Fallback to Channel Uploads Playlist Embed if API is restricted or rate-limited
                 document.getElementById('latest-video-frame').src = `https://www.youtube.com/embed?listType=playlist&list=UUpa_XDcuNnq0InfiUe5OtHw`;
             }
 
@@ -1554,10 +1623,6 @@
             updateNicheFreshnessNote();
         }
 
-        // --- Weekly auto-rotation (deterministic, no server needed) ---
-        // Every week (resetting each Sunday) a different, evenly-distributed
-        // slice of the keyword/title pool is selected and shuffled, so the
-        // "Top 20" list keeps changing on its own instead of staying static.
         function mulberry32(seed) {
             return function () {
                 seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
@@ -1577,7 +1642,6 @@
 
         function getCurrentWeekInfo() {
             const now = new Date();
-            // Anchor on a known Sunday (2024-01-07) so week boundaries always land on Sunday 00:00 local time.
             const anchor = new Date(2024, 0, 7);
             const msPerWeek = 7 * 24 * 60 * 60 * 1000;
             const weekIndex = Math.floor((now - anchor) / msPerWeek);
@@ -1650,6 +1714,124 @@
                 window.open(currentThumbnailUrl, '_blank');
             } finally {
                 btn.innerText = "⬇️ Direct Download Maximum Quality (HD)";
+            }
+        }
+
+        // --- NEW TAB 1: CLIENT-SIDE IMAGE FORMAT CONVERTER LOGIC ---
+        function convertImageFormat() {
+            const fileInput = document.getElementById('img-conv-file');
+            const targetMime = document.getElementById('img-target-format').value;
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Please select an image file first.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    
+                    if (targetMime === 'image/jpeg') {
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                    
+                    ctx.drawImage(img, 0, 0);
+
+                    const dataUrl = canvas.toDataURL(targetMime, 0.92);
+                    const dlBtn = document.getElementById('img-conv-download');
+                    
+                    let ext = '.png';
+                    if (targetMime === 'image/jpeg') ext = '.jpg';
+                    if (targetMime === 'image/webp') ext = '.webp';
+                    if (targetMime === 'image/bmp') ext = '.bmp';
+
+                    dlBtn.href = dataUrl;
+                    dlBtn.download = file.name.substring(0, file.name.lastIndexOf('.')) + '_converted' + ext;
+                    
+                    document.getElementById('img-conv-info').innerText = `Converted from ${file.type || 'source'} to ${targetMime} (${img.width}x${img.height}px)`;
+                    document.getElementById('img-conv-result').style.display = 'block';
+                };
+                img.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // --- NEW TAB 2: IN-BROWSER FFMPEG MEDIA EXTRACTOR LOGIC ---
+        let ffmpegInstance = null;
+
+        async function extractMediaInBrowser() {
+            const mediaInput = document.getElementById('media-file');
+            const action = document.getElementById('media-target-action').value;
+            const statusText = document.getElementById('media-status-text');
+            const dlContainer = document.getElementById('media-dl-container');
+            const dlBtn = document.getElementById('media-dl-btn');
+            const convertBtn = document.getElementById('media-convert-btn');
+
+            if (!mediaInput.files || mediaInput.files.length === 0) {
+                alert("Please select a video or audio file first.");
+                return;
+            }
+
+            const file = mediaInput.files[0];
+            document.getElementById('media-result').style.display = 'block';
+            dlContainer.style.display = 'none';
+            convertBtn.disabled = true;
+            statusText.innerText = "Loading WebAssembly Media Engine...";
+
+            try {
+                const { createFFmpeg, fetchFile } = FFmpeg;
+                if (!ffmpegInstance) {
+                    ffmpegInstance = createFFmpeg({ log: false });
+                }
+
+                if (!ffmpegInstance.isLoaded()) {
+                    await ffmpegInstance.load();
+                }
+
+                statusText.innerText = "Processing file inside browser memory...";
+
+                const inputName = 'input_' + Date.now() + '_' + file.name;
+                ffmpegInstance.FS('writeFile', inputName, await fetchFile(file));
+
+                let outputName = 'output_' + Date.now();
+                let mimeType = '';
+
+                if (action === 'mp3') {
+                    outputName += '.mp3';
+                    mimeType = 'audio/mp3';
+                    await ffmpegInstance.run('-i', inputName, '-vn', '-ab', '192k', outputName);
+                } else if (action === 'gif') {
+                    outputName += '.gif';
+                    mimeType = 'image/gif';
+                    await ffmpegInstance.run('-i', inputName, '-t', '5', '-vf', 'fps=10,scale=320:-1:flags=lanczos', outputName);
+                }
+
+                const data = ffmpegInstance.FS('readFile', outputName);
+                const blob = new Blob([data.buffer], { type: mimeType });
+                const blobUrl = URL.createObjectURL(blob);
+
+                dlBtn.href = blobUrl;
+                dlBtn.download = outputName;
+                dlContainer.style.display = 'block';
+                statusText.innerText = "Extraction complete! Download your file below:";
+
+                ffmpegInstance.FS('unlink', inputName);
+                ffmpegInstance.FS('unlink', outputName);
+
+            } catch (err) {
+                console.error(err);
+                statusText.innerText = "Error converting media file. Make sure your browser supports WebAssembly.";
+            } finally {
+                convertBtn.disabled = false;
             }
         }
 
@@ -1764,7 +1946,6 @@
             fetchLatestChannelContent();
         };
 
-        // Purely visual: fades cards in as they enter the viewport.
         if ('IntersectionObserver' in window) {
             const revealObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
