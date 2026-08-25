@@ -753,83 +753,6 @@
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
         }
 
-        /* ANIME STREAMING PORTAL STYLES */
-        .anime-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .anime-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .anime-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-cyan);
-        }
-
-        .anime-poster {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-        }
-
-        .anime-body {
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: space-between;
-        }
-
-        .anime-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.4rem;
-            line-height: 1.2;
-        }
-
-        .anime-meta {
-            font-size: 0.8rem;
-            color: var(--accent-cyan);
-            margin-bottom: 0.6rem;
-        }
-
-        .anime-synopsis {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-
-        .hidden-help-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.15);
-            font-size: 0.75rem;
-            cursor: pointer;
-            margin-top: 1rem;
-            padding: 0.2rem 0.5rem;
-            transition: color 0.3s ease;
-        }
-
-        .hidden-help-btn:hover {
-            color: var(--accent-cyan);
-        }
-
         footer {
             text-align: center;
             padding: 2rem 1rem;
@@ -856,6 +779,41 @@
             font-weight: 600;
         }
 
+        /* EXTRA HELP SECTION STYLES */
+        .extra-help-toggle-wrap {
+            text-align: center;
+            padding: 1rem 0;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+        }
+
+        .extra-help-section {
+            display: none;
+            background: rgba(15, 20, 30, 0.85);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            backdrop-filter: blur(12px);
+            animation: fadeInResult 0.4s ease both;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            background: #0b0d13;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         @media (max-width: 600px) {
             nav {
                 justify-content: center;
@@ -868,6 +826,9 @@
             }
             .btn {
                 width: 100%;
+            }
+            .iframe-container {
+                height: 380px;
             }
         }
     </style>
@@ -1210,43 +1171,46 @@
         </main>
     </div>
 
-    <!-- SECRET ANIME WATCHING VIEW -->
-    <div id="anime-view" class="view-section">
-        <main class="container" style="padding-top: 1.5rem;">
-            <button class="btn btn-back" onclick="switchView('home-view')">
-                &larr; Back to Home Page
+    <!-- EXTRA HIDDEN HELP SECTION WITH EMBED IFRAME INTERFACE -->
+    <div class="container" style="padding-top: 0; padding-bottom: 2rem;">
+        <div class="extra-help-toggle-wrap">
+            <button class="btn btn-secondary" id="extra-help-toggle-btn" onclick="toggleExtraHelp()">
+                💡 Need Extra Help? Click to Expand Help Hub
             </button>
+        </div>
 
-            <h2 class="section-title">Anime Streaming & Information Hub</h2>
-            <p class="section-subtitle">Search, discover, and watch anime trailers and details using Jikan REST API</p>
+        <div id="extra-help-section" class="extra-help-section">
+            <h2 class="section-title">Developer & Creator Help Hub</h2>
+            <p class="section-subtitle">Access interactive external documentation and developer resources right inside the site.</p>
 
-            <div class="card">
-                <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
-                    <input type="text" id="anime-search-input" class="input-field" placeholder="Search anime (e.g. Naruto, Solo Leveling, One Piece)..." style="flex: 1; min-width: 200px;">
-                    <button class="btn btn-primary" onclick="searchAnimeHub()">Search Anime</button>
+            <div class="tool-tabs" style="margin-bottom: 1.2rem;">
+                <button class="tab-btn active" onclick="switchHelpTab(event, 'https://godotengine.org/')">
+                    <span class="tab-icon">🤖</span>Godot Engine Docs
+                </button>
+                <button class="tab-btn" onclick="switchHelpTab(event, 'https://wikipedia.org')">
+                    <span class="tab-icon">📖</span>General Knowledge
+                </button>
+                <button class="tab-btn" onclick="switchHelpTab(event, 'custom')">
+                    <span class="tab-icon">🔗</span>Custom URL Embed
+                </button>
+            </div>
+
+            <div id="custom-url-box" class="input-group" style="display: none; margin-bottom: 1rem;">
+                <label for="custom-iframe-url">Enter External Tool or Page URL:</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="url" id="custom-iframe-url" class="input-field" placeholder="https://example.com" value="https://godotengine.org/">
+                    <button class="btn btn-primary" onclick="loadCustomIframe()">Load</button>
                 </div>
             </div>
 
-            <!-- PLAYER MODAL SECTION FOR TRAILERS -->
-            <div id="anime-player-box" class="card" style="display: none; margin-top: 1.5rem; text-align: center;">
-                <h3 id="player-title" style="margin-bottom: 0.8rem; color: var(--accent-cyan);">Anime Preview Player</h3>
-                <div class="video-container" style="max-width: 800px; margin: 0 auto;">
-                    <iframe id="anime-trailer-frame" src="" allowfullscreen></iframe>
-                </div>
-                <button class="btn btn-secondary" onclick="closeAnimePlayer()" style="margin-top: 1rem;">Close Player</button>
+            <div class="iframe-container">
+                <iframe id="help-iframe-display" src="https://godotengine.org/" title="External Help Workspace" loading="lazy"></iframe>
             </div>
-
-            <div id="anime-results-container" class="anime-grid">
-                <!-- Dynamic Jikan API Results Will Populate Here -->
-            </div>
-        </main>
+        </div>
     </div>
 
     <footer>
         <p>&copy; 2026 SharpDev Gaming. Official site hosted at <a href="https://sharpdevyt.github.io/com/" target="_blank" rel="noopener noreferrer">sharpdevyt.github.io/com</a></p>
-        <div>
-            <button class="hidden-help-btn" onclick="switchView('anime-view'); fetchTopAnime();">Help Section</button>
-        </div>
     </footer>
 
     <script>
@@ -1949,83 +1913,44 @@
             document.getElementById('ms-result').style.display = 'block';
         }
 
-        // --- JIKAN ANIME API INTEGRATION LOGIC ---
-        async function fetchTopAnime() {
-            const container = document.getElementById('anime-results-container');
-            container.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">Loading top anime titles...</p>';
-
-            try {
-                const response = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
-                const result = await response.json();
-                renderAnimeCards(result.data);
-            } catch (err) {
-                container.innerHTML = '<p style="color: red; grid-column: 1/-1;">Failed to load anime content. Please try again.</p>';
+        /* EXTRA HELP SECTION HANDLERS */
+        function toggleExtraHelp() {
+            const section = document.getElementById('extra-help-section');
+            const btn = document.getElementById('extra-help-toggle-btn');
+            
+            if (section.style.display === 'block') {
+                section.style.display = 'none';
+                btn.innerText = '💡 Need Extra Help? Click to Expand Help Hub';
+            } else {
+                section.style.display = 'block';
+                btn.innerText = '✖ Close Extra Help Hub';
+                section.scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        async function searchAnimeHub() {
-            const query = document.getElementById('anime-search-input').value.trim();
-            if (!query) return;
+        function switchHelpTab(event, targetUrl) {
+            const parent = event.currentTarget.parentElement;
+            parent.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
 
-            const container = document.getElementById('anime-results-container');
-            container.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">Searching titles...</p>';
+            const customInput = document.getElementById('custom-url-box');
+            const iframe = document.getElementById('help-iframe-display');
 
-            try {
-                const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=12`);
-                const result = await response.json();
-                renderAnimeCards(result.data);
-            } catch (err) {
-                container.innerHTML = '<p style="color: red; grid-column: 1/-1;">Error fetching search results.</p>';
+            if (targetUrl === 'custom') {
+                customInput.style.display = 'block';
+            } else {
+                customInput.style.display = 'none';
+                iframe.src = targetUrl;
             }
         }
 
-        function renderAnimeCards(list) {
-            const container = document.getElementById('anime-results-container');
-            container.innerHTML = '';
-
-            if (!list || list.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">No anime titles found.</p>';
-                return;
+        function loadCustomIframe() {
+            const url = document.getElementById('custom-iframe-url').value.trim();
+            if (url) {
+                document.getElementById('help-iframe-display').src = url;
+            } else {
+                alert('Please enter a valid URL.');
             }
-
-            list.forEach(anime => {
-                const trailerUrl = anime.trailer?.embed_url || '';
-                const card = document.createElement('div');
-                card.className = 'anime-card';
-                card.innerHTML = `
-                    <img src="${anime.images.jpg.image_url}" alt="${anime.title}" class="anime-poster">
-                    <div class="anime-body">
-                        <div>
-                            <div class="anime-title">${anime.title}</div>
-                            <div class="anime-meta">★ ${anime.score ?? 'N/A'} | ${anime.episodes ?? '?'} Eps</div>
-                            <div class="anime-synopsis">${anime.synopsis || 'No synopsis available.'}</div>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem; flex-direction: column;">
-                            ${trailerUrl ? `<button class="btn btn-primary" style="font-size:0.75rem; padding: 0.4rem;" onclick="playTrailer('${trailerUrl.replace(/'/g, "\\'")}', '${anime.title.replace(/'/g, "\\'")}')">▶ Watch Trailer</button>` : ''}
-                            <a href="${anime.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size:0.75rem; padding: 0.4rem; text-decoration: none;">View Episodes & Info</a>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function playTrailer(embedUrl, title) {
-            const playerBox = document.getElementById('anime-player-box');
-            const frame = document.getElementById('anime-trailer-frame');
-            const playerTitle = document.getElementById('player-title');
-
-            playerTitle.innerText = "Previewing: " + title;
-            frame.src = embedUrl + "&autoplay=1";
-            playerBox.style.display = 'block';
-            playerBox.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function closeAnimePlayer() {
-            const playerBox = document.getElementById('anime-player-box');
-            const frame = document.getElementById('anime-trailer-frame');
-            frame.src = '';
-            playerBox.style.display = 'none';
         }
 
         window.onload = function() {
