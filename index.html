@@ -753,6 +753,50 @@
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
         }
 
+        /* EXTRA HELP & ANIME EMBED STYLES */
+        .extra-help-section {
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            margin-top: 4rem;
+            padding-top: 3rem;
+            padding-bottom: 2rem;
+            background: rgba(5, 7, 10, 0.7);
+        }
+
+        .toggle-help-btn {
+            display: block;
+            margin: 0 auto 1.5rem auto;
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-help-btn:hover {
+            background: rgba(34, 211, 238, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .anime-iframe-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            background: #000;
+        }
+
+        .anime-iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         footer {
             text-align: center;
             padding: 2rem 1rem;
@@ -779,41 +823,6 @@
             font-weight: 600;
         }
 
-        /* EXTRA HELP SECTION STYLES */
-        .extra-help-toggle-wrap {
-            text-align: center;
-            padding: 1rem 0;
-            border-top: 1px dashed rgba(255, 255, 255, 0.1);
-            margin-top: 2rem;
-        }
-
-        .extra-help-section {
-            display: none;
-            background: rgba(15, 20, 30, 0.85);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            backdrop-filter: blur(12px);
-            animation: fadeInResult 0.4s ease both;
-        }
-
-        .iframe-container {
-            width: 100%;
-            height: 500px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            background: #0b0d13;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         @media (max-width: 600px) {
             nav {
                 justify-content: center;
@@ -827,8 +836,8 @@
             .btn {
                 width: 100%;
             }
-            .iframe-container {
-                height: 380px;
+            .anime-iframe-container {
+                height: 400px;
             }
         }
     </style>
@@ -1171,43 +1180,46 @@
         </main>
     </div>
 
-    <!-- EXTRA HIDDEN HELP SECTION WITH EMBED IFRAME INTERFACE -->
-    <div class="container" style="padding-top: 0; padding-bottom: 2rem;">
-        <div class="extra-help-toggle-wrap">
-            <button class="btn btn-secondary" id="extra-help-toggle-btn" onclick="toggleExtraHelp()">
-                💡 Need Extra Help? Click to Expand Help Hub
+    <!-- EXTRA HELP & ANIME EMBED SECTION (HIDDEN BY DEFAULT) -->
+    <section class="extra-help-section">
+        <div class="container" style="padding-bottom: 0;">
+            <button class="toggle-help-btn" onclick="toggleExtraHelp()">
+                <span id="help-toggle-text">🔒 Show Extra Help & Anime Embed Tool</span>
             </button>
-        </div>
 
-        <div id="extra-help-section" class="extra-help-section">
-            <h2 class="section-title">Developer & Creator Help Hub</h2>
-            <p class="section-subtitle">Access interactive external documentation and developer resources right inside the site.</p>
+            <div id="extra-help-content" style="display: none;" class="card">
+                <div>
+                    <div class="card-tag">Special Interface</div>
+                    <h3>Anime Embed & Stream Player</h3>
+                    <p>Search or input any custom iframe/stream source URL to load media dynamically in an isolated environment.</p>
 
-            <div class="tool-tabs" style="margin-bottom: 1.2rem;">
-                <button class="tab-btn active" onclick="switchHelpTab(event, 'https://godotengine.org/')">
-                    <span class="tab-icon">🤖</span>Godot Engine Docs
-                </button>
-                <button class="tab-btn" onclick="switchHelpTab(event, 'https://wikipedia.org')">
-                    <span class="tab-icon">📖</span>General Knowledge
-                </button>
-                <button class="tab-btn" onclick="switchHelpTab(event, 'custom')">
-                    <span class="tab-icon">🔗</span>Custom URL Embed
-                </button>
-            </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.8rem; margin-bottom: 1rem;">
+                        <div class="input-group">
+                            <label for="anime-embed-url">Anime Embed / Stream iFrame URL:</label>
+                            <input type="text" id="anime-embed-url" class="input-field" placeholder="https://..." value="https://vidsrc.to/embed/anime/">
+                        </div>
+                        <div class="input-group">
+                            <label for="anime-preset-select">Preset Stream Provider:</label>
+                            <select id="anime-preset-select" class="input-field" style="background: #0b0d13;" onchange="applyAnimePreset()">
+                                <option value="custom">Custom URL Input</option>
+                                <option value="https://vidsrc.to/embed/anime/">VidSrc Anime</option>
+                                <option value="https://2embed.org/">2Embed</option>
+                            </select>
+                        </div>
+                    </div>
 
-            <div id="custom-url-box" class="input-group" style="display: none; margin-bottom: 1rem;">
-                <label for="custom-iframe-url">Enter External Tool or Page URL:</label>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="url" id="custom-iframe-url" class="input-field" placeholder="https://example.com" value="https://godotengine.org/">
-                    <button class="btn btn-primary" onclick="loadCustomIframe()">Load</button>
+                    <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="loadAnimeIframe()">Load Anime iFrame</button>
+                        <button class="btn btn-secondary" onclick="clearAnimeIframe()">Clear Player</button>
+                    </div>
+                </div>
+
+                <div class="anime-iframe-container">
+                    <iframe id="anime-player-frame" src="about:blank" allowfullscreen allow="autoplay; encrypted-media"></iframe>
                 </div>
             </div>
-
-            <div class="iframe-container">
-                <iframe id="help-iframe-display" src="https://godotengine.org/" title="External Help Workspace" loading="lazy"></iframe>
-            </div>
         </div>
-    </div>
+    </section>
 
     <footer>
         <p>&copy; 2026 SharpDev Gaming. Official site hosted at <a href="https://sharpdevyt.github.io/com/" target="_blank" rel="noopener noreferrer">sharpdevyt.github.io/com</a></p>
@@ -1913,44 +1925,39 @@
             document.getElementById('ms-result').style.display = 'block';
         }
 
-        /* EXTRA HELP SECTION HANDLERS */
+        // --- EXTRA HELP & ANIME EMBED FUNCTIONS ---
         function toggleExtraHelp() {
-            const section = document.getElementById('extra-help-section');
-            const btn = document.getElementById('extra-help-toggle-btn');
-            
-            if (section.style.display === 'block') {
-                section.style.display = 'none';
-                btn.innerText = '💡 Need Extra Help? Click to Expand Help Hub';
+            const content = document.getElementById('extra-help-content');
+            const toggleText = document.getElementById('help-toggle-text');
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                toggleText.innerText = '🔓 Hide Extra Help & Anime Embed Tool';
             } else {
-                section.style.display = 'block';
-                btn.innerText = '✖ Close Extra Help Hub';
-                section.scrollIntoView({ behavior: 'smooth' });
+                content.style.display = 'none';
+                toggleText.innerText = '🔒 Show Extra Help & Anime Embed Tool';
             }
         }
 
-        function switchHelpTab(event, targetUrl) {
-            const parent = event.currentTarget.parentElement;
-            parent.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            const customInput = document.getElementById('custom-url-box');
-            const iframe = document.getElementById('help-iframe-display');
-
-            if (targetUrl === 'custom') {
-                customInput.style.display = 'block';
-            } else {
-                customInput.style.display = 'none';
-                iframe.src = targetUrl;
+        function applyAnimePreset() {
+            const presetSelect = document.getElementById('anime-preset-select');
+            const urlInput = document.getElementById('anime-embed-url');
+            if (presetSelect.value !== 'custom') {
+                urlInput.value = presetSelect.value;
             }
         }
 
-        function loadCustomIframe() {
-            const url = document.getElementById('custom-iframe-url').value.trim();
-            if (url) {
-                document.getElementById('help-iframe-display').src = url;
-            } else {
-                alert('Please enter a valid URL.');
+        function loadAnimeIframe() {
+            const urlInput = document.getElementById('anime-embed-url').value.trim();
+            const frame = document.getElementById('anime-player-frame');
+            if (!urlInput) {
+                alert('Please enter a valid URL or select a preset source.');
+                return;
             }
+            frame.src = urlInput;
+        }
+
+        function clearAnimeIframe() {
+            document.getElementById('anime-player-frame').src = 'about:blank';
         }
 
         window.onload = function() {
