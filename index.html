@@ -753,6 +753,83 @@
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
         }
 
+        /* ANIME STREAMING PORTAL STYLES */
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .anime-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+        }
+
+        .anime-poster {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .anime-body {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .anime-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .anime-meta {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.6rem;
+        }
+
+        .anime-synopsis {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .hidden-help-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            padding: 0.2rem 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .hidden-help-btn:hover {
+            color: var(--accent-cyan);
+        }
+
         footer {
             text-align: center;
             padding: 2rem 1rem;
@@ -1133,8 +1210,43 @@
         </main>
     </div>
 
+    <!-- SECRET ANIME WATCHING VIEW -->
+    <div id="anime-view" class="view-section">
+        <main class="container" style="padding-top: 1.5rem;">
+            <button class="btn btn-back" onclick="switchView('home-view')">
+                &larr; Back to Home Page
+            </button>
+
+            <h2 class="section-title">Anime Streaming & Information Hub</h2>
+            <p class="section-subtitle">Search, discover, and watch anime trailers and details using Jikan REST API</p>
+
+            <div class="card">
+                <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                    <input type="text" id="anime-search-input" class="input-field" placeholder="Search anime (e.g. Naruto, Solo Leveling, One Piece)..." style="flex: 1; min-width: 200px;">
+                    <button class="btn btn-primary" onclick="searchAnimeHub()">Search Anime</button>
+                </div>
+            </div>
+
+            <!-- PLAYER MODAL SECTION FOR TRAILERS -->
+            <div id="anime-player-box" class="card" style="display: none; margin-top: 1.5rem; text-align: center;">
+                <h3 id="player-title" style="margin-bottom: 0.8rem; color: var(--accent-cyan);">Anime Preview Player</h3>
+                <div class="video-container" style="max-width: 800px; margin: 0 auto;">
+                    <iframe id="anime-trailer-frame" src="" allowfullscreen></iframe>
+                </div>
+                <button class="btn btn-secondary" onclick="closeAnimePlayer()" style="margin-top: 1rem;">Close Player</button>
+            </div>
+
+            <div id="anime-results-container" class="anime-grid">
+                <!-- Dynamic Jikan API Results Will Populate Here -->
+            </div>
+        </main>
+    </div>
+
     <footer>
         <p>&copy; 2026 SharpDev Gaming. Official site hosted at <a href="https://sharpdevyt.github.io/com/" target="_blank" rel="noopener noreferrer">sharpdevyt.github.io/com</a></p>
+        <div>
+            <button class="hidden-help-btn" onclick="switchView('anime-view'); fetchTopAnime();">Help Section</button>
+        </div>
     </footer>
 
     <script>
@@ -1835,6 +1947,85 @@
                 document.getElementById('ms-out').innerText = `${daysLeft} days (~${(daysLeft/30).toFixed(1)} months)`;
             }
             document.getElementById('ms-result').style.display = 'block';
+        }
+
+        // --- JIKAN ANIME API INTEGRATION LOGIC ---
+        async function fetchTopAnime() {
+            const container = document.getElementById('anime-results-container');
+            container.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">Loading top anime titles...</p>';
+
+            try {
+                const response = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
+                const result = await response.json();
+                renderAnimeCards(result.data);
+            } catch (err) {
+                container.innerHTML = '<p style="color: red; grid-column: 1/-1;">Failed to load anime content. Please try again.</p>';
+            }
+        }
+
+        async function searchAnimeHub() {
+            const query = document.getElementById('anime-search-input').value.trim();
+            if (!query) return;
+
+            const container = document.getElementById('anime-results-container');
+            container.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">Searching titles...</p>';
+
+            try {
+                const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=12`);
+                const result = await response.json();
+                renderAnimeCards(result.data);
+            } catch (err) {
+                container.innerHTML = '<p style="color: red; grid-column: 1/-1;">Error fetching search results.</p>';
+            }
+        }
+
+        function renderAnimeCards(list) {
+            const container = document.getElementById('anime-results-container');
+            container.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">No anime titles found.</p>';
+                return;
+            }
+
+            list.forEach(anime => {
+                const trailerUrl = anime.trailer?.embed_url || '';
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+                card.innerHTML = `
+                    <img src="${anime.images.jpg.image_url}" alt="${anime.title}" class="anime-poster">
+                    <div class="anime-body">
+                        <div>
+                            <div class="anime-title">${anime.title}</div>
+                            <div class="anime-meta">★ ${anime.score ?? 'N/A'} | ${anime.episodes ?? '?'} Eps</div>
+                            <div class="anime-synopsis">${anime.synopsis || 'No synopsis available.'}</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+                            ${trailerUrl ? `<button class="btn btn-primary" style="font-size:0.75rem; padding: 0.4rem;" onclick="playTrailer('${trailerUrl.replace(/'/g, "\\'")}', '${anime.title.replace(/'/g, "\\'")}')">▶ Watch Trailer</button>` : ''}
+                            <a href="${anime.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size:0.75rem; padding: 0.4rem; text-decoration: none;">View Episodes & Info</a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function playTrailer(embedUrl, title) {
+            const playerBox = document.getElementById('anime-player-box');
+            const frame = document.getElementById('anime-trailer-frame');
+            const playerTitle = document.getElementById('player-title');
+
+            playerTitle.innerText = "Previewing: " + title;
+            frame.src = embedUrl + "&autoplay=1";
+            playerBox.style.display = 'block';
+            playerBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeAnimePlayer() {
+            const playerBox = document.getElementById('anime-player-box');
+            const frame = document.getElementById('anime-trailer-frame');
+            frame.src = '';
+            playerBox.style.display = 'none';
         }
 
         window.onload = function() {
