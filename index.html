@@ -865,6 +865,56 @@
                     <a id="latest-short-link" href="https://www.youtube.com/playlist?list=PL1XuTk7AskldQKO-REY3u8enxRpplpTU0" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View Playlist &rarr;</a>
                 </div>
             </div>
+
+            <!-- ANIME PLAYER EMBED HELP SECTION -->
+            <section class="reveal" style="margin-top: 3rem;">
+                <h2 class="section-title">Popular Anime Embed Endpoints</h2>
+                <p class="section-subtitle">Integration references and live preview instances for public anime stream players.</p>
+
+                <div class="grid">
+                    <!-- CARD 1: Consumet Public Embed Instances -->
+                    <div class="card">
+                        <div>
+                            <div class="card-tag">Embed Integration</div>
+                            <h3>Consumet Public Embeds</h3>
+                            <p>Publicly hosted video player frames designed for flexible API-driven streaming implementations.</p>
+                            
+                            <div class="video-container">
+                                <iframe src="https://player.vidsrc.nl/" title="Consumet Embed Player" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <a href="https://github.com/consumet/consumet.api" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View Consumet Docs &rarr;</a>
+                    </div>
+
+                    <!-- CARD 2: VidStreaming / Gogo Embeds -->
+                    <div class="card">
+                        <div>
+                            <div class="card-tag">Direct Player Frame</div>
+                            <h3>VidStreaming / Gogo Embeds</h3>
+                            <p>Direct video player frames featuring support for auto-loading subbed and dubbed episode feeds.</p>
+                            
+                            <div class="video-container">
+                                <iframe src="https://emturbovid.net/" title="VidStreaming / Gogo Player" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <a href="https://gogoanime.gg/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">Explore Endpoint &rarr;</a>
+                    </div>
+
+                    <!-- CARD 3: AnimeDex / Miruro Embed Services -->
+                    <div class="card">
+                        <div>
+                            <div class="card-tag">Responsive Endpoint</div>
+                            <h3>AnimeDex / Miruro Services</h3>
+                            <p>Pre-built, mobile-responsive web players loaded directly via URL parameter structures.</p>
+                            
+                            <div class="video-container">
+                                <iframe src="https://www.miruro.tv/" title="AnimeDex / Miruro Embed Service" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; text-decoration: none;">View Source Specs &rarr;</a>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -1136,50 +1186,6 @@
     <footer>
         <p>&copy; 2026 SharpDev Gaming. Official site hosted at <a href="https://sharpdevyt.github.io/com/" target="_blank" rel="noopener noreferrer">sharpdevyt.github.io/com</a></p>
     </footer>
-
-    <!-- HIDDEN HELP SECTION: ANIME PLAYERS -->
-    <section id="hidden-help-section" style="display: none;" aria-hidden="false">
-        <h2>Popular Embed Endpoints</h2>
-        
-        <!-- 1. Consumet Public Embed Instances -->
-        <div class="help-embed-container">
-            <h3>Consumet Public Embed Instances</h3>
-            <iframe 
-                src="https://consumet-api.herokuapp.com/" 
-                title="Consumet Public Embed Frame" 
-                width="100%" 
-                height="450" 
-                frameborder="0" 
-                allowfullscreen>
-            </iframe>
-        </div>
-
-        <!-- 2. VidStreaming / Gogo Embeds -->
-        <div class="help-embed-container">
-            <h3>VidStreaming / Gogo Embeds</h3>
-            <iframe 
-                src="https://emturbovid.net/embed-1.html" 
-                title="VidStreaming / Gogo Embed Frame" 
-                width="100%" 
-                height="450" 
-                frameborder="0" 
-                allowfullscreen>
-            </iframe>
-        </div>
-
-        <!-- 3. AnimeDex / Miruro Embed Services -->
-        <div class="help-embed-container">
-            <h3>AnimeDex / Miruro Embed Services</h3>
-            <iframe 
-                src="https://miruro.to/embed?id=1" 
-                title="AnimeDex / Miruro Embed Frame" 
-                width="100%" 
-                height="450" 
-                frameborder="0" 
-                allowfullscreen>
-            </iframe>
-        </div>
-    </section>
 
     <script>
         let currentThumbnailUrl = '';
