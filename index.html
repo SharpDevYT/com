@@ -880,6 +880,7 @@
 
             <div class="tool-tabs">
                 <button class="tab-btn active" onclick="switchToolTab(event, 'tab-weekly-trend')"><span class="tab-icon">🔍</span>Weekly Keyword Analyzer</button>
+                <button class="tab-btn" onclick="switchToolTab(event, 'tab-anime')"><span class="tab-icon">🍿</span>Watch Anime</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-palette')"><span class="tab-icon">🎨</span>Color & Gradient Extractor</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-niche')"><span class="tab-icon">📊</span>Niche Rankings & Trends</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-thumbnail')"><span class="tab-icon">🖼️</span>Thumbnail Downloader</button>
@@ -920,6 +921,42 @@
                         <span style="font-size: 0.8rem; color: var(--text-muted);">Verify Live Real-Time Platform Data:</span>
                         <div id="live-links-container" class="external-links-flex"></div>
                     </div>
+                </div>
+            </div>
+
+            <!-- NEW TOOL: Watch Anime (Muse Asia Playlists) -->
+            <div id="tab-anime" class="tool-panel card">
+                <div>
+                    <div class="card-tag">Official Streaming Hub</div>
+                    <h3>Watch Free Anime Playlists (Muse Asia)</h3>
+                    <p>Select any anime title below to stream complete full-episode official playlists provided legally by Muse Asia.</p>
+                    
+                    <div class="input-group">
+                        <label for="anime-select">Select Anime Title:</label>
+                        <select id="anime-select" class="input-field" style="background: #0b0d13;" onchange="loadAnimePlaylist()">
+                            <option value="PLw70tLFkgve625N722u0cWjU94yZ0F_d7">Spy × Family</option>
+                            <option value="PLw70tLFkgve41D_e2X3w_yHkK37O1iZ0V">Mushoku Tensei: Jobless Reincarnation</option>
+                            <option value="PLw70tLFkgve4K7_a-0D_Jt2WpY-6Y3e0N">That Time I Got Reincarnated as a Slime</option>
+                            <option value="PLw70tLFkgve49W73eP8cZp64zZk3F8aX-">Hyouka</option>
+                            <option value="PLw70tLFkgve6eQ0pZJ7t9uO18wT4eG3uY">Tokyo Revengers</option>
+                            <option value="PLw70tLFkgve4r00Q4kO-a_s6Lq1p30Z9P">One-Punch Man</option>
+                            <option value="PLw70tLFkgve4R20zXy8V7Q3N1c7sW5pY_">Goblin Slayer</option>
+                            <option value="PLw70tLFkgve40LpS6MvEwS_2Q00P2WpT_">Assassination Classroom</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="video-container" style="margin-top: 1rem;">
+                    <iframe id="anime-player" src="https://www.youtube.com/embed/videoseries?list=PLw70tLFkgve625N722u0cWjU94yZ0F_d7" title="Muse Asia Anime Playlist" allowfullscreen></iframe>
+                </div>
+
+                <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;">
+                    <a id="anime-external-link" href="https://www.youtube.com/playlist?list=PLw70tLFkgve625N722u0cWjU94yZ0F_d7" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.8rem;">
+                        ▶ Open Playlist on YouTube &rarr;
+                    </a>
+                    <a href="https://www.youtube.com/@MuseAsia/playlists" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-size: 0.8rem;">
+                        🌐 Browse All Muse Asia Playlists
+                    </a>
                 </div>
             </div>
 
@@ -1139,6 +1176,16 @@
 
     <script>
         let currentThumbnailUrl = '';
+
+        // ANIME PLAYLIST SWITCHER
+        function loadAnimePlaylist() {
+            const playlistId = document.getElementById('anime-select').value;
+            const embedPlayer = document.getElementById('anime-player');
+            const extLink = document.getElementById('anime-external-link');
+
+            embedPlayer.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
+            extLink.href = `https://www.youtube.com/playlist?list=${playlistId}`;
+        }
 
         // AUTOMATIC CONTENT FETCH WITH ROBUST FALLBACKS
         async function fetchLatestChannelContent() {
@@ -1765,74 +1812,16 @@
             document.getElementById('gd-result').style.display = 'block';
         }
 
-        function extractColorPalette(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 50;
-                    canvas.height = 50;
-                    ctx.drawImage(img, 0, 0, 50, 50);
-
-                    const imgData = ctx.getImageData(0, 0, 50, 50).data;
-                    const colors = [];
-
-                    for (let i = 0; i < imgData.length; i += 40) {
-                        const r = imgData[i];
-                        const g = imgData[i+1];
-                        const b = imgData[i+2];
-                        const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-                        if (!colors.includes(hex)) colors.push(hex);
-                        if (colors.length >= 5) break;
-                    }
-
-                    const swatchContainer = document.getElementById('swatch-container');
-                    swatchContainer.innerHTML = '';
-                    colors.forEach(hex => {
-                        const box = document.createElement('div');
-                        box.className = 'color-swatch';
-                        box.style.backgroundColor = hex;
-                        box.innerText = hex;
-                        box.onclick = () => {
-                            navigator.clipboard.writeText(hex);
-                            alert('Copied HEX color: ' + hex);
-                        };
-                        swatchContainer.appendChild(box);
-                    });
-
-                    const gradCode = `background: linear-gradient(135deg, ${colors[0] || '#ff0000'}, ${colors[1] || '#22d3ee'});`;
-                    document.getElementById('gradient-preview').style.background = `linear-gradient(135deg, ${colors[0] || '#ff0000'}, ${colors[1] || '#22d3ee'})`;
-                    document.getElementById('css-gradient-code').innerText = gradCode;
-                    document.getElementById('palette-result').style.display = 'block';
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function copyCode(id) {
-            const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text);
-            alert("Code copied to clipboard!");
-        }
-
         function calculateMilestone() {
             const current = parseFloat(document.getElementById('ms-current').value) || 0;
-            const target = parseFloat(document.getElementById('ms-target').value) || 1000;
-            const daily = parseFloat(document.getElementById('ms-daily').value) || 1;
+            const target = parseFloat(document.getElementById('ms-target').value) || 0;
+            const daily = parseFloat(document.getElementById('ms-daily').value) || 0;
 
-            if (target <= current) {
-                document.getElementById('ms-out').innerText = "Target already reached!";
-            } else if (daily <= 0) {
-                document.getElementById('ms-out').innerText = "Daily rate must be greater than 0.";
+            if (daily <= 0 || target <= current) {
+                document.getElementById('ms-out').innerText = "0 days";
             } else {
                 const daysLeft = Math.ceil((target - current) / daily);
-                document.getElementById('ms-out').innerText = `${daysLeft} days (~${(daysLeft/30).toFixed(1)} months)`;
+                document.getElementById('ms-out').innerText = `${daysLeft} days`;
             }
             document.getElementById('ms-result').style.display = 'block';
         }
@@ -1840,21 +1829,6 @@
         window.onload = function() {
             fetchLatestChannelContent();
         };
-
-        if ('IntersectionObserver' in window) {
-            const revealObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('in-view');
-                        revealObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.15 });
-
-            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-        } else {
-            document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
-        }
     </script>
 </body>
 </html>
