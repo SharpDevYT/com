@@ -880,7 +880,6 @@
 
             <div class="tool-tabs">
                 <button class="tab-btn active" onclick="switchToolTab(event, 'tab-weekly-trend')"><span class="tab-icon">🔍</span>Weekly Keyword Analyzer</button>
-                <button class="tab-btn" onclick="switchToolTab(event, 'tab-anime')"><span class="tab-icon">🍿</span>Watch Anime</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-palette')"><span class="tab-icon">🎨</span>Color & Gradient Extractor</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-niche')"><span class="tab-icon">📊</span>Niche Rankings & Trends</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-thumbnail')"><span class="tab-icon">🖼️</span>Thumbnail Downloader</button>
@@ -921,42 +920,6 @@
                         <span style="font-size: 0.8rem; color: var(--text-muted);">Verify Live Real-Time Platform Data:</span>
                         <div id="live-links-container" class="external-links-flex"></div>
                     </div>
-                </div>
-            </div>
-
-            <!-- NEW TOOL: Watch Anime (Muse Asia Playlists) -->
-            <div id="tab-anime" class="tool-panel card">
-                <div>
-                    <div class="card-tag">Official Streaming Hub</div>
-                    <h3>Watch Free Anime Playlists (Muse Asia)</h3>
-                    <p>Select any anime title below to stream complete full-episode official playlists provided legally by Muse Asia.</p>
-                    
-                    <div class="input-group">
-                        <label for="anime-select">Select Anime Title:</label>
-                        <select id="anime-select" class="input-field" style="background: #0b0d13;" onchange="loadAnimePlaylist()">
-                            <option value="PLw70tLFkgve625N722u0cWjU94yZ0F_d7">Spy × Family</option>
-                            <option value="PLw70tLFkgve41D_e2X3w_yHkK37O1iZ0V">Mushoku Tensei: Jobless Reincarnation</option>
-                            <option value="PLw70tLFkgve4K7_a-0D_Jt2WpY-6Y3e0N">That Time I Got Reincarnated as a Slime</option>
-                            <option value="PLw70tLFkgve49W73eP8cZp64zZk3F8aX-">Hyouka</option>
-                            <option value="PLw70tLFkgve6eQ0pZJ7t9uO18wT4eG3uY">Tokyo Revengers</option>
-                            <option value="PLw70tLFkgve4r00Q4kO-a_s6Lq1p30Z9P">One-Punch Man</option>
-                            <option value="PLw70tLFkgve4R20zXy8V7Q3N1c7sW5pY_">Goblin Slayer</option>
-                            <option value="PLw70tLFkgve40LpS6MvEwS_2Q00P2WpT_">Assassination Classroom</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="video-container" style="margin-top: 1rem;">
-                    <iframe id="anime-player" src="https://www.youtube.com/embed/videoseries?list=PLw70tLFkgve625N722u0cWjU94yZ0F_d7" title="Muse Asia Anime Playlist" allowfullscreen></iframe>
-                </div>
-
-                <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;">
-                    <a id="anime-external-link" href="https://www.youtube.com/playlist?list=PLw70tLFkgve625N722u0cWjU94yZ0F_d7" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.8rem;">
-                        ▶ Open Playlist on YouTube &rarr;
-                    </a>
-                    <a href="https://www.youtube.com/@MuseAsia/playlists" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-size: 0.8rem;">
-                        🌐 Browse All Muse Asia Playlists
-                    </a>
                 </div>
             </div>
 
@@ -1130,6 +1093,9 @@
                             <option value="char3d">3D Character Controller (Movement + Jump)</option>
                             <option value="char2d">2D Platformer Character (Physics + Jump)</option>
                             <option value="topdown2d">2D Top-Down Movement (4/8 Direction)</option>
+                            <option value="horror3d">3D Horror Player Controller (Raycast Flashlight + Interaction)</option>
+                            <option value="towerleap">Vertical Tower Leaping Physics Controller</option>
+                            <option value="liquid2d">2D Liquid Sorting Color Controller</option>
                             <option value="audio">Global Sound Manager (BGM + SFX Pool)</option>
                             <option value="saveload">JSON Save / Load System</option>
                             <option value="joystick">Mobile Virtual Touch Joystick Input</option>
@@ -1176,16 +1142,6 @@
 
     <script>
         let currentThumbnailUrl = '';
-
-        // ANIME PLAYLIST SWITCHER
-        function loadAnimePlaylist() {
-            const playlistId = document.getElementById('anime-select').value;
-            const embedPlayer = document.getElementById('anime-player');
-            const extLink = document.getElementById('anime-external-link');
-
-            embedPlayer.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
-            extLink.href = `https://www.youtube.com/playlist?list=${playlistId}`;
-        }
 
         // AUTOMATIC CONTENT FETCH WITH ROBUST FALLBACKS
         async function fetchLatestChannelContent() {
@@ -1800,6 +1756,12 @@
                 code = `extends CharacterBody2D\n\nconst SPEED = 300.0\nconst JUMP_VELOCITY = -400.0\nvar gravity = ProjectSettings.get_setting("physics/2d/default_gravity")\n\nfunc _physics_process(delta):\n\tif not is_on_floor():\n\t\tvelocity.y += gravity * delta\n\tif Input.is_action_just_pressed("ui_accept") and is_on_floor():\n\t\tvelocity.y = JUMP_VELOCITY\n\tvar direction = Input.get_axis("ui_left", "ui_right")\n\tif direction:\n\t\tvelocity.x = direction * SPEED\n\telse:\n\t\tvelocity.x = move_toward(velocity.x, 0, SPEED)\n\tmove_and_slide()`;
             } else if (type === 'topdown2d') {
                 code = `extends CharacterBody2D\n\n@export var speed : float = 200.0\n\nfunc _physics_process(_delta):\n\tvar input_vec = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")\n\tvelocity = input_vec.normalized() * speed\n\tmove_and_slide()`;
+            } else if (type === 'horror3d') {
+                code = `extends CharacterBody3D\n\n@export var speed: float = 3.5\n@export var mouse_sensitivity: float = 0.003\n@onready var head = $Head\n@onready var flashlight = $Head/Flashlight\n@onready var raycast = $Head/InteractRay\n\nfunc _unhandled_input(event):\n\tif event is InputEventMouseMotion:\n\t\trotate_y(-event.relative.x * mouse_sensitivity)\n\t\thead.rotate_x(-event.relative.y * mouse_sensitivity)\n\t\thead.rotation.x = clamp(head.rotation.x, deg_to_rad(-80), deg_to_rad(80))\n\tif Input.is_action_just_pressed("toggle_flashlight"):\n\t\tflashlight.visible = !flashlight.visible\n\nfunc _physics_process(_delta):\n\tvar input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")\n\tvar direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()\n\tvelocity.x = direction.x * speed\n\tvelocity.z = direction.z * speed\n\tmove_and_slide()\n\tif Input.is_action_just_pressed("interact") and raycast.is_colliding():\n\t\tvar target = raycast.get_collider()\n\t\tif target.has_method("interact"):\n\t\t\ttarget.interact()`;
+            } else if (type === 'towerleap') {
+                code = `extends CharacterBody2D\n\n@export var move_speed: float = 200.0\n@export var max_jump_force: float = -700.0\nvar jump_charge: float = 0.0\nvar is_charging: bool = false\nvar gravity = ProjectSettings.get_setting("physics/2d/default_gravity")\n\nfunc _physics_process(delta):\n\tif not is_on_floor():\n\t\tvelocity.y += gravity * delta\n\telse:\n\t\tif Input.is_action_pressed("ui_accept"):\n\t\t\tis_charging = true\n\t\t\tjump_charge = min(jump_charge + delta * 1.5, 1.0)\n\t\t\tvelocity.x = 0\n\t\telif Input.is_action_just_released("ui_accept") and is_charging:\n\t\t\tvelocity.y = max_jump_force * jump_charge\n\t\t\tvar direction = Input.get_axis("ui_left", "ui_right")\n\t\t\tvelocity.x = direction * move_speed * 1.2\n\t\t\tjump_charge = 0.0\n\t\t\tis_charging = false\n\t\tif not is_charging:\n\t\t\tvar dir = Input.get_axis("ui_left", "ui_right")\n\t\t\tvelocity.x = dir * move_speed\n\tmove_and_slide()`;
+            } else if (type === 'liquid2d') {
+                code = `extends Node2D\n\n@export var liquid_color: Color = Color.RED\n@export var fill_amount: float = 1.0 # 0.0 to 1.0\n@onready var liquid_sprite = $LiquidSprite\n\nfunc _ready():\n\tupdate_liquid()\n\nfunc update_liquid():\n\tvar mat = liquid_sprite.material as ShaderMaterial\n\tif mat:\n\t\tmat.set_shader_parameter("tint_color", liquid_color)\n\t\tmat.set_shader_parameter("fill_level", fill_amount)\n\nfunc pour_into(target_vial: Node2D, amount: float):\n\tif fill_amount >= amount:\n\t\tfill_amount -= amount\n\t\ttarget_vial.fill_amount += amount\n\t\tupdate_liquid()\n\t\ttarget_vial.update_liquid()`;
             } else if (type === 'audio') {
                 code = `extends Node\n\n@onready var bgm_player = AudioStreamPlayer.new()\n\nfunc _ready():\n\tadd_child(bgm_player)\n\nfunc play_bgm(stream: AudioStream):\n\tbgm_player.stream = stream\n\tbgm_player.play()\n\nfunc play_sfx(stream: AudioStream):\n\tvar sfx = AudioStreamPlayer.new()\n\tsfx.stream = stream\n\tadd_child(sfx)\n\tsfx.play()\n\tsfx.finished.connect(sfx.queue_free)`;
             } else if (type === 'saveload') {
@@ -1812,16 +1774,74 @@
             document.getElementById('gd-result').style.display = 'block';
         }
 
+        function extractColorPalette(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 50;
+                    canvas.height = 50;
+                    ctx.drawImage(img, 0, 0, 50, 50);
+
+                    const imgData = ctx.getImageData(0, 0, 50, 50).data;
+                    const colors = [];
+
+                    for (let i = 0; i < imgData.length; i += 40) {
+                        const r = imgData[i];
+                        const g = imgData[i+1];
+                        const b = imgData[i+2];
+                        const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                        if (!colors.includes(hex)) colors.push(hex);
+                        if (colors.length >= 5) break;
+                    }
+
+                    const swatchContainer = document.getElementById('swatch-container');
+                    swatchContainer.innerHTML = '';
+                    colors.forEach(hex => {
+                        const box = document.createElement('div');
+                        box.className = 'color-swatch';
+                        box.style.backgroundColor = hex;
+                        box.innerText = hex;
+                        box.onclick = () => {
+                            navigator.clipboard.writeText(hex);
+                            alert('Copied HEX color: ' + hex);
+                        };
+                        swatchContainer.appendChild(box);
+                    });
+
+                    const gradCode = `background: linear-gradient(135deg, ${colors[0] || '#ff0000'}, ${colors[1] || '#22d3ee'});`;
+                    document.getElementById('gradient-preview').style.background = `linear-gradient(135deg, ${colors[0] || '#ff0000'}, ${colors[1] || '#22d3ee'})`;
+                    document.getElementById('css-gradient-code').innerText = gradCode;
+                    document.getElementById('palette-result').style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function copyCode(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert("Code copied to clipboard!");
+        }
+
         function calculateMilestone() {
             const current = parseFloat(document.getElementById('ms-current').value) || 0;
-            const target = parseFloat(document.getElementById('ms-target').value) || 0;
-            const daily = parseFloat(document.getElementById('ms-daily').value) || 0;
+            const target = parseFloat(document.getElementById('ms-target').value) || 1000;
+            const daily = parseFloat(document.getElementById('ms-daily').value) || 1;
 
-            if (daily <= 0 || target <= current) {
-                document.getElementById('ms-out').innerText = "0 days";
+            if (target <= current) {
+                document.getElementById('ms-out').innerText = "Target already reached!";
+            } else if (daily <= 0) {
+                document.getElementById('ms-out').innerText = "Daily rate must be greater than 0.";
             } else {
                 const daysLeft = Math.ceil((target - current) / daily);
-                document.getElementById('ms-out').innerText = `${daysLeft} days`;
+                document.getElementById('ms-out').innerText = `${daysLeft} days (~${(daysLeft/30).toFixed(1)} months)`;
             }
             document.getElementById('ms-result').style.display = 'block';
         }
@@ -1829,6 +1849,21 @@
         window.onload = function() {
             fetchLatestChannelContent();
         };
+
+        if ('IntersectionObserver' in window) {
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+        } else {
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+        }
     </script>
 </body>
 </html>
