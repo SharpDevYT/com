@@ -879,7 +879,8 @@
             <p class="section-subtitle">Client-side tools for YouTube creators and game developers.</p>
 
             <div class="tool-tabs">
-                <button class="tab-btn active" onclick="switchToolTab(event, 'tab-weekly-trend')"><span class="tab-icon">🔍</span>Weekly Keyword Analyzer</button>
+                <button class="tab-btn active" onclick="switchToolTab(event, 'tab-anime')"><span class="tab-icon">🍿</span>Anime Watcher Tool</button>
+                <button class="tab-btn" onclick="switchToolTab(event, 'tab-weekly-trend')"><span class="tab-icon">🔍</span>Weekly Keyword Analyzer</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-palette')"><span class="tab-icon">🎨</span>Color & Gradient Extractor</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-niche')"><span class="tab-icon">📊</span>Niche Rankings & Trends</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-thumbnail')"><span class="tab-icon">🖼️</span>Thumbnail Downloader</button>
@@ -889,8 +890,37 @@
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-milestone')"><span class="tab-icon">🎯</span>Milestone Calculator</button>
             </div>
 
+            <!-- ANIME WATCHER TOOL -->
+            <div id="tab-anime" class="tool-panel active card">
+                <div>
+                    <div class="card-tag">Streaming Hub</div>
+                    <h3>Muse Asia Free Anime Streaming</h3>
+                    <p>Select any featured series below to stream episodes directly on your site via embedded YouTube playlists.</p>
+                    
+                    <div class="input-group">
+                        <label for="anime-select">Select Anime Series:</label>
+                        <select id="anime-select" class="input-field" style="background: #0b0d13;" onchange="changeAnimePlaylist()">
+                            <option value="PLMvWCsColKaM">Attack on Titan (AOT)</option>
+                            <option value="PLWb9h4pKMCIY">JoJo's Bizarre Adventure (JoJo)</option>
+                            <option value="PLWBNgbV0LUX8">One-Punch Man (OPM)</option>
+                            <option value="PLULjw5SlciMA">The Seven Deadly Sins (SDS)</option>
+                            <option value="PLet6WmAEfYgk">Spy x Family (SXF)</option>
+                            <option value="PLWMEZ5mLVQOw">Assassination Classroom (ASC)</option>
+                            <option value="PLGM1YbEshsO0">Re:Zero - Starting Life in Another World (RE0)</option>
+                            <option value="PLTvwl-EW8KqM">That Time I Got Reincarnated as a Slime (Slime)</option>
+                            <option value="PLRr14r0YenYQ">Classroom of the Elite (COE)</option>
+                            <option value="PLSad71frBqm8">Mushoku Tensei: Jobless Reincarnation (MT)</option>
+                        </select>
+                    </div>
+
+                    <div class="video-container" style="margin-top: 1rem;">
+                        <iframe id="anime-player-frame" src="https://www.youtube.com/embed/videoseries?list=PLMvWCsColKaM" title="Anime Streaming Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
             <!-- WEEKLY KEYWORD TOOL -->
-            <div id="tab-weekly-trend" class="tool-panel active card">
+            <div id="tab-weekly-trend" class="tool-panel card">
                 <div>
                     <div class="card-tag">Real-Time Search Metrics</div>
                     <h3>Weekly Keyword Quality Analyzer</h3>
@@ -1093,9 +1123,6 @@
                             <option value="char3d">3D Character Controller (Movement + Jump)</option>
                             <option value="char2d">2D Platformer Character (Physics + Jump)</option>
                             <option value="topdown2d">2D Top-Down Movement (4/8 Direction)</option>
-                            <option value="horror3d">3D Horror Player Controller (Raycast Flashlight + Interaction)</option>
-                            <option value="towerleap">Vertical Tower Leaping Physics Controller</option>
-                            <option value="liquid2d">2D Liquid Sorting Color Controller</option>
                             <option value="audio">Global Sound Manager (BGM + SFX Pool)</option>
                             <option value="saveload">JSON Save / Load System</option>
                             <option value="joystick">Mobile Virtual Touch Joystick Input</option>
@@ -1142,6 +1169,12 @@
 
     <script>
         let currentThumbnailUrl = '';
+
+        function changeAnimePlaylist() {
+            const playlistId = document.getElementById('anime-select').value;
+            const iframe = document.getElementById('anime-player-frame');
+            iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
+        }
 
         // AUTOMATIC CONTENT FETCH WITH ROBUST FALLBACKS
         async function fetchLatestChannelContent() {
@@ -1756,12 +1789,6 @@
                 code = `extends CharacterBody2D\n\nconst SPEED = 300.0\nconst JUMP_VELOCITY = -400.0\nvar gravity = ProjectSettings.get_setting("physics/2d/default_gravity")\n\nfunc _physics_process(delta):\n\tif not is_on_floor():\n\t\tvelocity.y += gravity * delta\n\tif Input.is_action_just_pressed("ui_accept") and is_on_floor():\n\t\tvelocity.y = JUMP_VELOCITY\n\tvar direction = Input.get_axis("ui_left", "ui_right")\n\tif direction:\n\t\tvelocity.x = direction * SPEED\n\telse:\n\t\tvelocity.x = move_toward(velocity.x, 0, SPEED)\n\tmove_and_slide()`;
             } else if (type === 'topdown2d') {
                 code = `extends CharacterBody2D\n\n@export var speed : float = 200.0\n\nfunc _physics_process(_delta):\n\tvar input_vec = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")\n\tvelocity = input_vec.normalized() * speed\n\tmove_and_slide()`;
-            } else if (type === 'horror3d') {
-                code = `extends CharacterBody3D\n\n@export var speed: float = 3.5\n@export var mouse_sensitivity: float = 0.003\n@onready var head = $Head\n@onready var flashlight = $Head/Flashlight\n@onready var raycast = $Head/InteractRay\n\nfunc _unhandled_input(event):\n\tif event is InputEventMouseMotion:\n\t\trotate_y(-event.relative.x * mouse_sensitivity)\n\t\thead.rotate_x(-event.relative.y * mouse_sensitivity)\n\t\thead.rotation.x = clamp(head.rotation.x, deg_to_rad(-80), deg_to_rad(80))\n\tif Input.is_action_just_pressed("toggle_flashlight"):\n\t\tflashlight.visible = !flashlight.visible\n\nfunc _physics_process(_delta):\n\tvar input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")\n\tvar direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()\n\tvelocity.x = direction.x * speed\n\tvelocity.z = direction.z * speed\n\tmove_and_slide()\n\tif Input.is_action_just_pressed("interact") and raycast.is_colliding():\n\t\tvar target = raycast.get_collider()\n\t\tif target.has_method("interact"):\n\t\t\ttarget.interact()`;
-            } else if (type === 'towerleap') {
-                code = `extends CharacterBody2D\n\n@export var move_speed: float = 200.0\n@export var max_jump_force: float = -700.0\nvar jump_charge: float = 0.0\nvar is_charging: bool = false\nvar gravity = ProjectSettings.get_setting("physics/2d/default_gravity")\n\nfunc _physics_process(delta):\n\tif not is_on_floor():\n\t\tvelocity.y += gravity * delta\n\telse:\n\t\tif Input.is_action_pressed("ui_accept"):\n\t\t\tis_charging = true\n\t\t\tjump_charge = min(jump_charge + delta * 1.5, 1.0)\n\t\t\tvelocity.x = 0\n\t\telif Input.is_action_just_released("ui_accept") and is_charging:\n\t\t\tvelocity.y = max_jump_force * jump_charge\n\t\t\tvar direction = Input.get_axis("ui_left", "ui_right")\n\t\t\tvelocity.x = direction * move_speed * 1.2\n\t\t\tjump_charge = 0.0\n\t\t\tis_charging = false\n\t\tif not is_charging:\n\t\t\tvar dir = Input.get_axis("ui_left", "ui_right")\n\t\t\tvelocity.x = dir * move_speed\n\tmove_and_slide()`;
-            } else if (type === 'liquid2d') {
-                code = `extends Node2D\n\n@export var liquid_color: Color = Color.RED\n@export var fill_amount: float = 1.0 # 0.0 to 1.0\n@onready var liquid_sprite = $LiquidSprite\n\nfunc _ready():\n\tupdate_liquid()\n\nfunc update_liquid():\n\tvar mat = liquid_sprite.material as ShaderMaterial\n\tif mat:\n\t\tmat.set_shader_parameter("tint_color", liquid_color)\n\t\tmat.set_shader_parameter("fill_level", fill_amount)\n\nfunc pour_into(target_vial: Node2D, amount: float):\n\tif fill_amount >= amount:\n\t\tfill_amount -= amount\n\t\ttarget_vial.fill_amount += amount\n\t\tupdate_liquid()\n\t\ttarget_vial.update_liquid()`;
             } else if (type === 'audio') {
                 code = `extends Node\n\n@onready var bgm_player = AudioStreamPlayer.new()\n\nfunc _ready():\n\tadd_child(bgm_player)\n\nfunc play_bgm(stream: AudioStream):\n\tbgm_player.stream = stream\n\tbgm_player.play()\n\nfunc play_sfx(stream: AudioStream):\n\tvar sfx = AudioStreamPlayer.new()\n\tsfx.stream = stream\n\tadd_child(sfx)\n\tsfx.play()\n\tsfx.finished.connect(sfx.queue_free)`;
             } else if (type === 'saveload') {
