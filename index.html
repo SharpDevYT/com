@@ -879,8 +879,7 @@
             <p class="section-subtitle">Client-side tools for YouTube creators and game developers.</p>
 
             <div class="tool-tabs">
-                <button class="tab-btn active" onclick="switchToolTab(event, 'tab-anime')"><span class="tab-icon">🍿</span>Anime Watcher Tool</button>
-                <button class="tab-btn" onclick="switchToolTab(event, 'tab-weekly-trend')"><span class="tab-icon">🔍</span>Weekly Keyword Analyzer</button>
+                <button class="tab-btn active" onclick="switchToolTab(event, 'tab-weekly-trend')"><span class="tab-icon">🔍</span>Weekly Keyword Analyzer</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-palette')"><span class="tab-icon">🎨</span>Color & Gradient Extractor</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-niche')"><span class="tab-icon">📊</span>Niche Rankings & Trends</button>
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-thumbnail')"><span class="tab-icon">🖼️</span>Thumbnail Downloader</button>
@@ -890,39 +889,8 @@
                 <button class="tab-btn" onclick="switchToolTab(event, 'tab-milestone')"><span class="tab-icon">🎯</span>Milestone Calculator</button>
             </div>
 
-           <!-- ANIME WATCHER TOOL -->
-<div id="tab-anime" class="tool-panel active card">
-    <div>
-        <div class="card-tag">Streaming Hub</div>
-        <h3>Muse Asia Free Anime Streaming</h3>
-        <p>Select any featured series below to stream episodes directly on your site via embedded YouTube playlists.</p>
-        
-        <div class="input-group">
-            <label for="anime-select">Select Anime Series:</label>
-            <select id="anime-select" class="input-field" style="background: #0b0d13;" onchange="changeAnimePlaylist()">
-                <option value="PLMvWCsColKaM">Attack on Titan (AOT)</option>
-                <option value="PLWb9h4pKMCIY">JoJo's Bizarre Adventure (JoJo)</option>
-                <option value="PLWBNgbV0LUX8">One-Punch Man (OPM)</option>
-                <option value="PLULjw5SlciMA">The Seven Deadly Sins (SDS)</option>
-                <option value="PLet6WmAEfYgk">Spy x Family (SXF)</option>
-                <option value="PLWMEZ5mLVQOw">Assassination Classroom (ASC)</option>
-                <option value="PLGM1YbEshsO0">Re:Zero - Starting Life in Another World (RE0)</option>
-                <option value="PLTvwl-EW8KqM">That Time I Got Reincarnated as a Slime (Slime)</option>
-                <option value="PLRr14r0YenYQ">Classroom of the Elite (COE)</option>
-                <option value="PLSad71frBqm8">Mushoku Tensei: Jobless Reincarnation (MT)</option>
-                <option value="PLwLSw1wKl00Si8t8gMvA9N-q6w8e5L2h5">Mob Psycho 100</option>
-                <option value="PLxSscHGqaIW6dK3E21VvD8bS5N-J5q9pQ">Hunter x Hunter</option>
-            </select>
-        </div>
-
-        <div class="video-container" style="margin-top: 1rem;">
-            <iframe id="anime-player-frame" src="https://www.youtube.com/embed/videoseries?list=PLMvWCsColKaM" title="Anime Streaming Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-        </div>
-    </div>
-</div>
-
             <!-- WEEKLY KEYWORD TOOL -->
-            <div id="tab-weekly-trend" class="tool-panel card">
+            <div id="tab-weekly-trend" class="tool-panel active card">
                 <div>
                     <div class="card-tag">Real-Time Search Metrics</div>
                     <h3>Weekly Keyword Quality Analyzer</h3>
@@ -1171,12 +1139,6 @@
 
     <script>
         let currentThumbnailUrl = '';
-
-        function changeAnimePlaylist() {
-            const playlistId = document.getElementById('anime-select').value;
-            const iframe = document.getElementById('anime-player-frame');
-            iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
-        }
 
         // AUTOMATIC CONTENT FETCH WITH ROBUST FALLBACKS
         async function fetchLatestChannelContent() {
